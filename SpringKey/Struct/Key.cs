@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SpringKey.Models;
 
 namespace SpringKey.Struct
 {
@@ -68,17 +69,8 @@ namespace SpringKey.Struct
             StrBudAppend("account", Account);
             StrBudAppend("password", Password);
             StrBudAppend("description", Description);
-            StrBudAppend("tags", GetStringTags());
+            StrBudAppend("tags", string.Join('\n', tags));
             return strBud.ToString();
-        }
-
-        private string GetStringTags()
-        {
-            var strBud = new StringBuilder();
-            foreach (var tag in tags)
-                strBud.Append(tag + '\n');
-            return strBud.ToString();
-
         }
         #endregion
 
