@@ -17,12 +17,29 @@ namespace SpringKey.Models
         // 构建 -> info... -> string
         // 读取 -> string -> key
 
-        public Key KeyStructTest()
+        #region KeyStruct
+
+        public void KeyStructTest()
         {
             string testFile = "KeyStruct.struct";
             string userPath = GetUserPath(UserName);
             string testFilePath = Path.Combine(userPath, testFile);
 
+            string keyValue = CreateKeyStruct(testFilePath);
+            string keyLoad = "";
+            if (!LoadKeyStruct(keyValue, ref keyLoad))
+                return;
+            if (keyValue != keyLoad)
+            {
+                Log.warning("Key struct test failed!");
+                Log.print("keyValue: \n" + keyValue);
+                Log.print("keyLoad: \n" + keyLoad);
+            }
+                
+        }
+
+        private string CreateKeyStruct(string _filePath)
+        {
             Key key = new Key("mira", "110119120", "this_password");
             key.Description = "我的mira账号\nuser";
             key.AddTag("音乐");
@@ -32,10 +49,22 @@ namespace SpringKey.Models
             key.RenameTag("账号", "文件");
             string value = key.GetStringKey();
 
-            SaveFile(testFilePath, value);
-
-            return key;
+            return value;
         }
+
+        private bool LoadKeyStruct(string _data, ref string _loadKey)
+        {
+            Key key = Key.LoadKey(_data);
+            if(!key.IsKey())
+                return false;
+            _loadKey = key.GetStringKey();
+            return true;
+        }
+
+        #endregion
+
+        #region utils
+
         private bool SaveFile(string _path, string _value)
         {
             if (File.Exists(_path)) File.Delete(_path);
@@ -58,5 +87,7 @@ namespace SpringKey.Models
         {
             if (!Directory.Exists(_paht)) Directory.CreateDirectory(_paht);
         }
+
+        #endregion
     }
 }
