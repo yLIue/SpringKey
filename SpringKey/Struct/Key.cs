@@ -1,10 +1,11 @@
-﻿using System;
+﻿using SpringKey.Models;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SpringKey.Models;
+using System.Windows.Input;
 
 namespace SpringKey.Struct
 {
@@ -48,6 +49,13 @@ namespace SpringKey.Struct
             return true;
         }
 
+        public bool IsKey()
+        {
+            if(Title == "" || Password == "" || Account == "")
+                return false;
+            return true;
+        }
+
         #endregion
 
 
@@ -64,7 +72,7 @@ namespace SpringKey.Struct
                     strBud.AppendLine('\t' + value);
 
             }
-            StrBudAppend("keyVersion", KeyVersion);
+            strBud.AppendLine(KeyVersion);
             StrBudAppend("title", Title);
             StrBudAppend("account", Account);
             StrBudAppend("password", Password);
@@ -73,6 +81,53 @@ namespace SpringKey.Struct
             return strBud.ToString();
         }
         #endregion
+
+        #endregion
+
+        #region LoadKey
+
+        public static Key LoadKey(string _data)
+        {
+            Key key = new Key("", "", "");
+            switch (_data.Split('\n')[0].TrimEnd('\r'))
+            {
+                case "skkey_ver0.1": LoadKeyVer01(key, _data); break;
+            }
+            return key;
+        }
+
+        private static bool LoadKeyVer01(Key _key, string _data)
+        {
+            StringBuilder description = new StringBuilder();
+            string sec = "";
+            void Push(string _value)
+            {
+                if (sec == "") return;
+                switch (sec)
+                {
+                    case "title": _key.Title = _value; break;
+                    case "account": _key.Account = _value; break;
+                    case "password": _key.Password = _value; break;
+                    case "description": description.Append($"{_value}\n"); break;
+                    case "tags": _key.AddTag(_value); break;
+                }
+            }
+
+            foreach (var stepLine in _data.Split('\n'))
+            {
+                var line = stepLine.TrimEnd('\r');
+                if (line.StartsWith("[") && line.EndsWith("]"))
+                {
+                    sec = line.Trim('[', ']');
+                }
+                else if (line.StartsWith("\t"))
+                {
+                    Push(line.Substring(1));
+                }
+            }
+            _key.Description = description.ToString().TrimEnd('\n');
+            return true;
+        }
 
         #endregion
 
