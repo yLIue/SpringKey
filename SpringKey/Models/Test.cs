@@ -17,6 +17,21 @@ namespace SpringKey.Models
         // 构建 -> info... -> string
         // 读取 -> string -> key
 
+        public void KeySpringTest()
+        {
+            string data = CreateKeyStruct();
+            var keySpring = new KeySpring();
+            string keyData = keySpring.EncryptString(data, UserKey);
+            string loadData = keySpring.DecryptToString(keyData, UserKey);
+            if (data != loadData)
+            {
+                Log.warning("Cryptography test failed!");
+                Log.print("data: \n" + data);
+                Log.print("loadData: \n" + loadData);
+            }
+            Log.print(loadData);
+        }
+
         #region KeyStruct
 
         public void KeyStructTest()
@@ -25,7 +40,7 @@ namespace SpringKey.Models
             string userPath = GetUserPath(UserName);
             string testFilePath = Path.Combine(userPath, testFile);
 
-            string keyValue = CreateKeyStruct(testFilePath);
+            string keyValue = CreateKeyStruct();
             string keyLoad = "";
             if (!LoadKeyStruct(keyValue, ref keyLoad))
                 return;
@@ -38,7 +53,7 @@ namespace SpringKey.Models
                 
         }
 
-        private string CreateKeyStruct(string _filePath)
+        private string CreateKeyStruct()
         {
             Key key = new Key("mira", "110119120", "this_password");
             key.Description = "我的mira账号\nuser";
