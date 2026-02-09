@@ -22,6 +22,7 @@ namespace SpringKey
         {
             InitializeComponent();
             KeyStructTest.Test();
+            KeySpringTest.Test();
         }
     }
 }
