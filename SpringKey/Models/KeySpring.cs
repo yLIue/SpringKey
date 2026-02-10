@@ -19,7 +19,7 @@ namespace SpringKey.Models
         private const int PBKDF2_Iterations = 200_000;
         private const int HeaderSize = 1 + SaltSize + NonceSize;
 
-        #region 解密
+        #region 加密
         public string EncryptString(string _data, string _userKey)
         {
             byte[] data = Encoding.UTF8.GetBytes(_data);
@@ -68,6 +68,7 @@ namespace SpringKey.Models
         }
         #endregion
 
+        #region 解密
         public string DecryptToString(string _data, string _userKey)
         {
             byte[] blob = Convert.FromBase64String(_data);
@@ -100,5 +101,6 @@ namespace SpringKey.Models
             
             return Encoding.UTF8.GetString(data);
         }
+        #endregion
     }
 }
