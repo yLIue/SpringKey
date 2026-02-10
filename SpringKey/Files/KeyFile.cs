@@ -7,9 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace SpringKey.Struct
+namespace SpringKey.Files
 {
-    class Key
+    class KeyFile
     {
         public const string KeyVersion = "skkey_ver0.1";
         public string Title { get; set; }
@@ -19,7 +19,7 @@ namespace SpringKey.Struct
 
         private List<String> tags = new List<string>();
         public IReadOnlyList<String> Tags => tags.AsReadOnly();
-        public Key(string _title, string _account, string _password) {
+        public KeyFile(string _title, string _account, string _password) {
             Title = _title;
             Account = _account;
             Password = _password;
@@ -84,9 +84,9 @@ namespace SpringKey.Struct
         }
 
         #region LoadKey
-        public static Key LoadKey(string _data)
+        public static KeyFile LoadKey(string _data)
         {
-            Key key = new Key("", "", "");
+            KeyFile key = new KeyFile("", "", "");
             switch (_data.Split('\n')[0].TrimEnd('\r'))
             {
                 case "skkey_ver0.1": LoadKeyVer01(key, _data); break;
@@ -94,7 +94,7 @@ namespace SpringKey.Struct
             return key;
         }
 
-        private static bool LoadKeyVer01(Key _key, string _data)
+        private static bool LoadKeyVer01(KeyFile _key, string _data)
         {
             StringBuilder description = new StringBuilder();
             string sec = "";
