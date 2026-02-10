@@ -12,7 +12,7 @@ namespace SpringKey.Test
         public static void Test()
         {
             var userData = new TestData();
-            string data = KeyStructTest.CreateKeyStruct();
+            string data = KeyFileTest.CreateKeyStruct();
             var keySpring = new KeySpring();
             string keyData = keySpring.EncryptString(data, userData.UserKey);
             string loadData = keySpring.DecryptToString(keyData, userData.UserKey);

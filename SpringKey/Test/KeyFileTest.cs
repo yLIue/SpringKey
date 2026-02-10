@@ -1,5 +1,5 @@
 ﻿using SpringKey.Models;
-using SpringKey.Struct;
+using SpringKey.Files;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SpringKey.Test
 {
-    internal static class KeyStructTest
+    internal static class KeyFileTest
     {
         public static void Test()
         {
@@ -34,7 +34,7 @@ namespace SpringKey.Test
         public static string CreateKeyStruct()
         {
             var userData = new TestData();
-            Key key = new Key(userData.Key1.Title, userData.Key1.Account, userData.Key1.Password);
+            KeyFile key = new KeyFile(userData.Key1.Title, userData.Key1.Account, userData.Key1.Password);
             key.Description = userData.Key1.Description;
             foreach (string tag in userData.Key1.Tags)
                 key.AddTag(tag);
@@ -49,7 +49,7 @@ namespace SpringKey.Test
 
         private static bool LoadKeyStruct(string _data, ref string _loadKey)
         {
-            Key key = Key.LoadKey(_data);
+            KeyFile key = KeyFile.LoadKey(_data);
             if (!key.IsKey())
                 return false;
             _loadKey = key.GetStringKey();

@@ -21,7 +21,7 @@ namespace SpringKey
         public MainWindow()
         {
             InitializeComponent();
-            KeyStructTest.Test();
+            KeyFileTest.Test();
             KeySpringTest.Test();
         }
     }
