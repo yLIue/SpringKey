@@ -26,9 +26,22 @@ namespace SpringKey.Struct
         }
 
         #region api
+        // 判断是否是有效的Key
+        public bool IsKey()
+        {
+            if (Title == "" || Password == "" || Account == "")
+                return false;
+            return true;
+        }
+
+        // 加密并输出字符串
+        public string Save(string _userKey)
+        {
+            var keySpring = new KeySpring();
+            return keySpring.EncryptString(GetStringKey(), _userKey);
+        }
 
         #region tag
-
         public bool AddTag(string _tag)
         {
             if (string.IsNullOrWhiteSpace(_tag)) return false;
@@ -48,20 +61,9 @@ namespace SpringKey.Struct
             tags[indexFind] = _newTag.Trim();
             return true;
         }
-
-        public bool IsKey()
-        {
-            if(Title == "" || Password == "" || Account == "")
-                return false;
-            return true;
-        }
-
         #endregion
 
-
-
-
-        #region 输出字符串
+        // 输出字符串
         public string GetStringKey()
         {
             var strBud = new StringBuilder();
@@ -80,12 +82,8 @@ namespace SpringKey.Struct
             StrBudAppend("tags", string.Join('\n', tags));
             return strBud.ToString();
         }
-        #endregion
-
-        #endregion
 
         #region LoadKey
-
         public static Key LoadKey(string _data)
         {
             Key key = new Key("", "", "");
@@ -128,8 +126,8 @@ namespace SpringKey.Struct
             _key.Description = description.ToString().TrimEnd('\n');
             return true;
         }
-
         #endregion
 
+        #endregion //api
     }
 }
