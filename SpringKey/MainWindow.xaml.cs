@@ -23,6 +23,7 @@ namespace SpringKey
             InitializeComponent();
             KeyFileTest.Test();
             KeySpringTest.Test();
+            IndexFileTest.Test();
         }
     }
 }
