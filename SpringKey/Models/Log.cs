@@ -42,5 +42,10 @@ namespace SpringKey.Models
 
             Trace.WriteLine($"{Demarcation}");
         }
+
+        public static void print(int _info)
+        {
+            Trace.Write($"\n{_info}\n");
+        }
     }
 }
