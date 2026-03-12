@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using SpringKey.ViewModel;
 
 using SpringKey.Test;
 
@@ -21,10 +22,7 @@ namespace SpringKey
         public MainWindow()
         {
             InitializeComponent();
-            KeyFileTest.Test();
-            KeySpringTest.Test();
-            //IndexFileTest.Test();
-            LinkFileTest.Test();
+            this.DataContext = new MainViewModel();
         }
     }
 }
