@@ -4,6 +4,40 @@
              xmlns:local="clr-namespace:SpringKey"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Color x:Key="themeColor">#1E1E1E</Color>
+        <Color x:Key="borderColor">#3E3E42</Color>
+        <Color x:Key="threeLayerColor">#3C3C3C</Color>
+
+        <SolidColorBrush x:Key="ThemeColor" Color="{StaticResource themeColor}"/>
+        <SolidColorBrush x:Key="BorderColor" Color="{StaticResource borderColor}"/>
+        <SolidColorBrush x:Key="InputBackground" Color="{StaticResource threeLayerColor}"/>
+        <SolidColorBrush x:Key="InputBorder" Color="{StaticResource borderColor}"/>
+
+
+        <Style TargetType="PasswordBox" x:Key="UserKeyPassword">
+            <Setter Property="Background" Value="{StaticResource InputBackground}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource InputBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="CaretBrush" Value="White"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="2">
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+
     </Application.Resources>
 </Application>
