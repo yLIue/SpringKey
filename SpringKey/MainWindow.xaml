@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpringKey"
         xmlns:ViewModel="clr-namespace:SpringKey.ViewModel"
+        xmlns:Helpers="clr-namespace:SpringKey.Helpers"
         mc:Ignorable="d"
         Title="SpringKey" Height="700" Width="1000"
         Background="{StaticResource ThemeColor}">
@@ -17,27 +18,62 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,1,0">
+        <Border Grid.Column="0" BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,1,0"
+                Background="{StaticResource SideBarBackground}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="110"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <Border Grid.Row="0" Padding="15"
-                        BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,0,1">
+                <Border Grid.Row="0" Padding="15" Height="110"
+                        BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,0,1" Visibility="{Binding LoginVisibility}">
                     <StackPanel>
                         <TextBlock Text="UserKey" Margin="0,0,0,10" Foreground="#FFCCCCCC" FontSize="12"/>
-                        <PasswordBox Height="30" Style="{StaticResource UserKeyPassword}">
-                            <PasswordBox.InputBindings>
-                                <KeyBinding Key="Enter"/>
-                            </PasswordBox.InputBindings>
-                        </PasswordBox>
+
+                        <TextBox Style="{StaticResource UserKeyPassword}" Height="30" 
+                                 Helpers:MaskedTextBoxHelper.IsEnabled="True"
+                                 Helpers:MaskedTextBoxHelper.Password="{Binding UserKey, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding KeyEnterCommand}"/>
+                            </TextBox.InputBindings>
+                        </TextBox>
+
                         <TextBlock Text="Enter" FontSize="10" Foreground="#888" Margin="0,10,0,0" TextAlignment="Right"/>
                     </StackPanel>
-                    
                 </Border>
-                
+
+                <Border Grid.Row="0" Padding="15" Height="110"
+                        BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,0,1" Visibility="{Binding UserVisibility}">
+                    <StackPanel>
+                        <Grid Margin="0,5,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Ellipse Grid.Column="0" Width="32" Height="32" 
+                                     Fill="{StaticResource ProfilePictureColor}"/>
+                            <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                       Foreground="White" Text="萱"/>
+
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
+                                <TextBlock Text="柳月" FontSize="14"
+                                           Foreground="White"/>
+                                <TextBlock Text="使用中" FontSize="10" Foreground="#4EC9B0"/>
+                            </StackPanel>
+
+                            <Button Grid.Column="2" VerticalAlignment="Top" Style="{StaticResource IcoButton}">
+                                <Path Data="{StaticResource IconEditGeometry}" Fill="{StaticResource Brush_Foreground}"
+                                      Height="12" Width="12" Stretch="Uniform"/>
+                            </Button>
+                        </Grid>
+
+                        <Button Content="退出登录" Margin="0,20,0,0" HorizontalAlignment="Left" FontSize="11" Style="{StaticResource IcoButton}"/>
+                    </StackPanel>
+                </Border>
+
             </Grid>
         </Border>
 
