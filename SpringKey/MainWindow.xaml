@@ -70,7 +70,8 @@
                             </Button>
                         </Grid>
 
-                        <Button Content="退出登录" Margin="0,20,0,0" HorizontalAlignment="Left" FontSize="11" Style="{StaticResource IcoButton}"/>
+                        <Button Content="退出登录" Margin="0,20,0,0" HorizontalAlignment="Left" FontSize="11" Style="{StaticResource IcoButton}"
+                                Command="{Binding SignOutCommand}"/>
                     </StackPanel>
                 </Border>
 

@@ -28,6 +28,8 @@ namespace SpringKey.ViewModel
         #region MVVMDefinition
         public ICommand SignInCommand { get; }
 
+        public ICommand SignOutCommand { get; }
+
         private Visibility _userVisibility = Visibility.Hidden;
 
         public Visibility UserVisibility
@@ -65,7 +67,16 @@ namespace SpringKey.ViewModel
         public MainViewModel()
         {
             SignInCommand = new RelayCommand(SignIn);
+            SignOutCommand = new RelayCommand(SignOut);
             appPath = Path.Combine(appPath, ".test");
+        }
+
+        private void SignOut()
+        {
+            userLink = null;
+            LoginVisibilityChange();
+            _ = PromptChange($"SignOut");
+            UserKey = "";
         }
 
         private void SignIn()
@@ -76,10 +87,10 @@ namespace SpringKey.ViewModel
                 return;
             }
 
-            userLink = new LinkFile(appPath, UserKey);
+            //userLink = new LinkFile(appPath, UserKey);
 
             LoginVisibilityChange();
-            _ = PromptChange($"EnterInputKey: {UserKey},Hidden");
+            _ = PromptChange($"EnterInputKey: {UserKey}");
         }
 
         #region utils
