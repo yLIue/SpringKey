@@ -14,8 +14,7 @@ namespace SpringKey.ViewModel
     class MainViewModel : ViewModelBase
     {
         #region Definition
-        public ICommand KeyEnterCommand { get; }
-
+        
         private const string DefaultPrompt = "这里是提示语句";
 
         private CancellationTokenSource? _cts;
@@ -27,6 +26,8 @@ namespace SpringKey.ViewModel
         #endregion
 
         #region MVVMDefinition
+        public ICommand SignInCommand { get; }
+
         private Visibility _userVisibility = Visibility.Hidden;
 
         public Visibility UserVisibility
@@ -63,11 +64,11 @@ namespace SpringKey.ViewModel
 
         public MainViewModel()
         {
-            KeyEnterCommand = new RelayCommand(KeyEnter);
+            SignInCommand = new RelayCommand(SignIn);
             appPath = Path.Combine(appPath, ".test");
         }
 
-        private void KeyEnter()
+        private void SignIn()
         {
             if (UserKey == "")
             {
