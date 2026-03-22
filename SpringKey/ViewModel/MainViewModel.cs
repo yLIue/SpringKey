@@ -27,8 +27,25 @@ namespace SpringKey.ViewModel
 
         #region MVVMDefinition
         public ICommand SignInCommand { get; }
-
         public ICommand SignOutCommand { get; }
+
+        private string ?_userInitial;
+
+        public string ?UserInitial
+        {
+            get => _userInitial;
+            set => SetProperty(ref _userInitial, value);
+        }
+
+
+        private string ?_userName;
+
+        public string ?UserName
+        {
+            get => _userName;
+            set => SetProperty(ref _userName, value);
+        }
+
 
         private Visibility _userVisibility = Visibility.Hidden;
 
@@ -71,11 +88,18 @@ namespace SpringKey.ViewModel
             appPath = Path.Combine(appPath, ".test");
         }
 
-        private void SignOut()
+        private void LoadData()
+        {
+            userLink = new LinkFile(appPath, UserKey);
+            UserName = userLink.UserName;
+            UserInitial = UserName[0].ToString();
+        }
+
+        private void UninstallData()
         {
             userLink = null;
-            LoginVisibilityChange();
-            _ = PromptChange($"SignOut");
+            UserName = null;
+            UserInitial = null;
             UserKey = "";
         }
 
@@ -87,10 +111,17 @@ namespace SpringKey.ViewModel
                 return;
             }
 
-            //userLink = new LinkFile(appPath, UserKey);
+            LoadData();
 
             LoginVisibilityChange();
             _ = PromptChange($"EnterInputKey: {UserKey}");
+        }
+
+        private void SignOut()
+        {
+            UninstallData();
+            LoginVisibilityChange();
+            _ = PromptChange($"SignOut"); 
         }
 
         #region utils

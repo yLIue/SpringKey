@@ -42,7 +42,8 @@
                         <TextBlock Text="Enter" FontSize="10" Foreground="#888" Margin="0,10,0,0" TextAlignment="Right"/>
                     </StackPanel>
                 </Border>
-
+                
+                <!--用户界面-->
                 <Border Grid.Row="0" Padding="15" Height="110"
                         BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,0,1" Visibility="{Binding UserVisibility}">
                     <StackPanel>
@@ -56,10 +57,10 @@
                             <Ellipse Grid.Column="0" Width="32" Height="32" 
                                      Fill="{StaticResource ProfilePictureColor}"/>
                             <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" 
-                                       Foreground="White" Text="萱"/>
+                                       Foreground="White" Text="{Binding UserInitial}"/>
 
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
-                                <TextBlock Text="柳月" FontSize="14"
+                                <TextBlock Text="{Binding UserName}" FontSize="14"
                                            Foreground="White"/>
                                 <TextBlock Text="使用中" FontSize="10" Foreground="#4EC9B0"/>
                             </StackPanel>
