@@ -21,6 +21,8 @@ namespace SpringKey.ViewModel
 
         private LinkFile? userLink;
 
+        private IndexFile? userIndex;
+
         private string appPath = AppDomain.CurrentDomain.BaseDirectory;
 
         #endregion
@@ -28,6 +30,28 @@ namespace SpringKey.ViewModel
         #region MVVMDefinition
         public ICommand SignInCommand { get; }
         public ICommand SignOutCommand { get; }
+
+        private string _selectedGroup;
+
+        public string SelectedGroup
+        {
+            get => _selectedGroup;
+            set 
+            {
+                SetProperty(ref _selectedGroup, value);
+                _ = PromptChange($"Surveillance: {_selectedGroup}");
+            }
+        }
+
+
+        private IReadOnlyList<String> ?_groupIndex;
+
+        public IReadOnlyList<String> ?GroupIndex
+        {
+            get => _groupIndex;
+            set => SetProperty(ref _groupIndex, value);
+        }
+
 
         private string ?_userInitial;
 
@@ -91,8 +115,10 @@ namespace SpringKey.ViewModel
         private void LoadData()
         {
             userLink = new LinkFile(appPath, UserKey);
+            userIndex = new IndexFile(userLink.UserPath,UserKey);
             UserName = userLink.UserName;
             UserInitial = UserName[0].ToString();
+            GroupIndex = userIndex.GroupIndex;
         }
 
         private void UninstallData()
@@ -100,7 +126,9 @@ namespace SpringKey.ViewModel
             userLink = null;
             UserName = null;
             UserInitial = null;
+            userIndex = null;
             UserKey = "";
+            GroupIndex = null;
         }
 
         private void SignIn()
