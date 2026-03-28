@@ -1,14 +1,8 @@
 ﻿using System.IO;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using SpringKey.ViewModel;
+using SpringKey.Services;
 
 using SpringKey.Test;
 
@@ -22,7 +16,6 @@ namespace SpringKey
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = new MainViewModel();
         }
     }
 }

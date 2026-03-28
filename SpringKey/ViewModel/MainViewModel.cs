@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using SpringKey.Files;
 using SpringKey.MVVM;
+using SpringKey.Services;
 
 namespace SpringKey.ViewModel
 {
@@ -24,12 +25,15 @@ namespace SpringKey.ViewModel
         private IndexFile? userIndex;
 
         private string appPath = AppDomain.CurrentDomain.BaseDirectory;
+        
+        private readonly IDialogService _dialogService;
 
         #endregion
 
         #region MVVMDefinition
         public ICommand SignInCommand { get; }
         public ICommand SignOutCommand { get; }
+        public ICommand AddFileCommand { get; }
 
         private string _selectedGroup;
 
@@ -105,11 +109,22 @@ namespace SpringKey.ViewModel
         }
         #endregion
 
-        public MainViewModel()
+        public MainViewModel() : this(new DialogService())
+        {
+        }
+
+        public MainViewModel(IDialogService dialogService)
         {
             SignInCommand = new RelayCommand(SignIn);
             SignOutCommand = new RelayCommand(SignOut);
+            AddFileCommand = new RelayCommand(AddFile);
             appPath = Path.Combine(appPath, ".test");
+            _dialogService = dialogService;
+        }
+
+        private void AddFile()
+        {
+            _dialogService.ShowAddFileView();
         }
 
         private void LoadData()
