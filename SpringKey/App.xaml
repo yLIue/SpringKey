@@ -8,34 +8,28 @@
             M14.06,9L15,9.94L5.92,19H5V18.08L14.06,9M17.66,3C17.41,3 17.15,3.1 16.96,3.29L15.13,5.12L18.88,8.87L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18.17,3.09 17.92,3 17.66,3M14.06,6.19L3,17.25V21H6.75L17.81,9.94L14.06,6.19Z
         </Geometry>
 
-        <Color x:Key="themeColor">#1E1E1E</Color>
-        <Color x:Key="borderColor">#3E3E42</Color>
-        <Color x:Key="threeLayerColor">#3C3C3C</Color>
-        <Color x:Key="loveColor">#d06aea</Color>
-        <Color x:Key="twoColor">#252526</Color>
-        <Color x:Key="buttonColor">#CCCCCC</Color>
-        <Color x:Key="Color_Foreground">#CCCCCC</Color>
-        <Color x:Key="buttonHover">#2A2D2E</Color>
-        <Color x:Key="Color_Hover">#2A2D2E</Color>
-
-
-        <SolidColorBrush x:Key="SideBarBackground" Color="{StaticResource twoColor}"/>
-        <SolidColorBrush x:Key="ThemeColor" Color="{StaticResource themeColor}"/>
-        <SolidColorBrush x:Key="BorderColor" Color="{StaticResource borderColor}"/>
-        <SolidColorBrush x:Key="InputBackground" Color="{StaticResource threeLayerColor}"/>
-        <SolidColorBrush x:Key="InputBorder" Color="{StaticResource borderColor}"/>
-        <SolidColorBrush x:Key="ProfilePictureColor" Color="{StaticResource loveColor}"/>
-        <SolidColorBrush x:Key="ButtonBackground" Color="{StaticResource buttonColor}"/>
-        <SolidColorBrush x:Key="Brush_Foreground" Color="{StaticResource Color_Foreground}"/>
-        <SolidColorBrush x:Key="ButtonHover" Color="{StaticResource buttonHover}"/>
-        <SolidColorBrush x:Key="Brush_Hover" Color="{StaticResource Color_Hover}"/>
-
-
-
-        <Style TargetType="TextBox" x:Key="UserKeyPassword">
-            <Setter Property="Background" Value="{StaticResource InputBackground}"/>
+        <Color x:Key="ColorTheme">#1E1E1E</Color>
+        <Color x:Key="ColorTowArea">#252526</Color>
+        <Color x:Key="ColorThreeArea">#3C3C3C</Color>
+        <Color x:Key="ColorBorder">#3E3E42</Color>
+        <Color x:Key="ColorLove">#d06aea</Color>
+        <Color x:Key="ColorIco">#CCCCCC</Color>
+        <Color x:Key="ColorHover">#2A2D2E</Color>
+        
+        <SolidColorBrush x:Key="ThemeColor" Color="{StaticResource ColorTheme}"/>
+        <SolidColorBrush x:Key="BorderColor" Color="{StaticResource ColorBorder}"/>
+        <SolidColorBrush x:Key="SideBarBackground" Color="{StaticResource ColorTowArea}"/>
+        <SolidColorBrush x:Key="ProfilePictureColor" Color="{StaticResource ColorLove}"/>
+        <SolidColorBrush x:Key="IcoColor" Color="{StaticResource ColorIco}"/>
+        
+        <SolidColorBrush x:Key="PasswordBackground" Color="{StaticResource ColorThreeArea}"/>
+        <SolidColorBrush x:Key="PassWordBorderColor" Color="{StaticResource ColorBorder}"/>
+        <SolidColorBrush x:Key="ButtonHover" Color="{StaticResource ColorHover}"/>
+        
+        <Style TargetType="TextBox" x:Key="StyleUserKeyPassword">
+            <Setter Property="Background" Value="{StaticResource PasswordBackground}"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="{StaticResource InputBorder}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PassWordBorderColor}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="5"/>
             <Setter Property="CaretBrush" Value="White"/>
@@ -43,9 +37,9 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
-                        <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}" 
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="2">
                             <ScrollViewer x:Name="PART_ContentHost"/>
                         </Border>
@@ -53,10 +47,10 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
+        
         <Style TargetType="ListBoxItem">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{StaticResource Brush_Foreground}"/>
+            <Setter Property="Foreground" Value="{StaticResource IcoColor}"/>
             <Setter Property="Padding" Value="10,5"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -66,7 +60,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Brush_Hover}"/>
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource ButtonHover}"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter TargetName="Bd" Property="Background" Value="#37373D"/>
@@ -77,10 +71,10 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <Style TargetType="Button" x:Key="IcoButton">
+        
+        <Style TargetType="Button" x:Key="StyleIcoButton">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{StaticResource ButtonBackground}"/>
+            <Setter Property="Foreground" Value="{StaticResource IcoColor}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="5"/>
             <Setter Property="Template">
@@ -97,7 +91,6 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-
         </Style>
 
     </Application.Resources>

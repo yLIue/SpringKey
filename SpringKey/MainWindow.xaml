@@ -33,21 +33,21 @@
                         Visibility="{Binding LoginVisibility}">
                     <StackPanel>
                         <TextBlock Text="UserKey" Margin="0,0,0,10" Foreground="#FFCCCCCC" FontSize="12" />
-
-                        <TextBox Style="{StaticResource UserKeyPassword}" Height="30"
+                
+                        <TextBox Style="{StaticResource StyleUserKeyPassword}" Height="30"
                                  Helpers:MaskedTextBoxHelper.IsEnabled="True"
                                  Helpers:MaskedTextBoxHelper.Password="{Binding UserKey, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
                             <TextBox.InputBindings>
                                 <KeyBinding Key="Enter" Command="{Binding SignInCommand}" />
                             </TextBox.InputBindings>
                         </TextBox>
-
+                
                         <TextBlock Text="Enter" FontSize="10" Foreground="#888" Margin="0,10,0,0" TextAlignment="Right" />
                     </StackPanel>
                 </Border>
 
                 <!--用户界面-->
-                <Border Grid.Row="0" Padding="15" Height="110"
+                <Border Grid.Row="0" Padding="15,15,15,0" Height="110"
                         BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,0,1"
                         Visibility="{Binding UserVisibility}">
                     <StackPanel>
@@ -69,14 +69,14 @@
                                 <TextBlock Text="使用中" FontSize="10" Foreground="#4EC9B0" />
                             </StackPanel>
 
-                            <Button Grid.Column="2" VerticalAlignment="Top" Style="{StaticResource IcoButton}">
-                                <Path Data="{StaticResource IconEditGeometry}" Fill="{StaticResource Brush_Foreground}"
+                            <Button Grid.Column="2" VerticalAlignment="Top" Style="{StaticResource StyleIcoButton}">
+                                <Path Data="{StaticResource IconEditGeometry}" Fill="{StaticResource IcoColor}"
                                       Height="12" Width="12" Stretch="Uniform" />
                             </Button>
                         </Grid>
 
-                        <Button Content="退出登录" Margin="0,20,0,0" HorizontalAlignment="Left" FontSize="11"
-                                Style="{StaticResource IcoButton}"
+                        <Button Content="退出登录" Margin="0,20,0,0" HorizontalAlignment="Left" FontSize="11" Width="70" Height="28"
+                                Style="{StaticResource StyleIcoButton}"
                                 Command="{Binding SignOutCommand}" />
 
                     </StackPanel>
@@ -109,7 +109,7 @@
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
                                 Visibility="{Binding UserVisibility}">
-                        <Button Style="{StaticResource IcoButton}" Margin="0,0,8,0"
+                        <Button Style="{StaticResource StyleIcoButton}" Margin="0,0,8,0"
                                 Command="{Binding AddFileCommand}">
                             <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="14" />
                         </Button>
