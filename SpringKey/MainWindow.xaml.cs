@@ -16,6 +16,10 @@ namespace SpringKey
         public MainWindow()
         {
             InitializeComponent();
+            var promptService = new PromptService();
+            var dialogService = new DialogService(promptService);
+            var vm = new MainViewModel(dialogService, promptService);
+            DataContext = vm;
         }
     }
 }

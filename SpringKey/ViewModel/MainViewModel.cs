@@ -27,6 +27,8 @@ namespace SpringKey.ViewModel
         private string appPath = AppDomain.CurrentDomain.BaseDirectory;
         
         private readonly IDialogService _dialogService;
+        
+        private readonly IPromptService _promptService;
 
         #endregion
 
@@ -35,9 +37,9 @@ namespace SpringKey.ViewModel
         public ICommand SignOutCommand { get; }
         public ICommand AddFileCommand { get; }
 
-        private string _selectedGroup;
+        private string? _selectedGroup;
 
-        public string SelectedGroup
+        public string? SelectedGroup
         {
             get => _selectedGroup;
             set 
@@ -105,21 +107,28 @@ namespace SpringKey.ViewModel
         public string Prompt
         {
             get => _prompt;
-            set => SetProperty(ref _prompt, value);
+            set
+            {
+                System.Diagnostics.Debug.WriteLine($"Prompt setter 被调用，新值：{value}");
+                SetProperty(ref _prompt, value);
+            }
         }
+
         #endregion
 
-        public MainViewModel() : this(new DialogService())
+        public MainViewModel() : this(new DialogService(new PromptService()),new PromptService())
         {
         }
 
-        public MainViewModel(IDialogService dialogService)
+        public MainViewModel(IDialogService dialogService, IPromptService promptService)
         {
             SignInCommand = new RelayCommand(SignIn);
             SignOutCommand = new RelayCommand(SignOut);
             AddFileCommand = new RelayCommand(AddFile);
             appPath = Path.Combine(appPath, ".test");
             _dialogService = dialogService;
+            _promptService = promptService;
+            _promptService.PromptRequested += message => _ = PromptChange(message);
         }
 
         private void AddFile()

@@ -3,4 +3,5 @@
 public interface IDialogService
 {
     void ShowAddFileView();
+    void CloseAddFileView();
 }
