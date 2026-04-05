@@ -17,7 +17,7 @@ namespace SpringKey.Files
     // 索引内容:版本号,各个分类,和总文件列表
     // 考虑功能
     // Init.创建索引文件的时候查看当前目录下有没有KeyFile文件，如果有则将它们加入索引文件中
-    internal class IndexFile
+    public class IndexFile
     {
         private const string Version = "skindex_ver0.1";
         private const string FileName = ".skindex";
@@ -29,6 +29,10 @@ namespace SpringKey.Files
         private string ALLGorup = "全部";
         public IReadOnlyList<String> GroupIndex => groupIndex.AsReadOnly();
 
+        public IndexFile()
+        {
+            
+        }
         public IndexFile(string _userPath, string _userKey)
         {
             RootPath = _userPath;
