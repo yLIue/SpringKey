@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace SpringKey.Files
 {
-    class KeyFile
+    public class KeyFile
     {
         public const string KeyVersion = "skkey_ver0.1";
         public string Title { get; set; }
