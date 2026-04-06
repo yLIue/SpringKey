@@ -87,7 +87,10 @@ namespace SpringKey.Files
             string hash = KeySave(_key);
             if (Groups["全部"].Contains(hash))
                 return;
-            Groups["全部"].Add(hash);
+            if(_class == "全部")
+                Groups["未分类"].Add(hash);
+            else
+                Groups["全部"].Add(hash);
             if (!Groups.ContainsKey(_class)) CreateGroup(_class);
             Groups[_class].Add(hash);
             Updata();
