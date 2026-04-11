@@ -6,11 +6,49 @@
         xmlns:vm="clr-namespace:SpringKey.ViewModel"
         xmlns:local="clr-namespace:SpringKey.View"
         mc:Ignorable="d"
-        Title="AddFileView" Height="450" Width="800">
+        Title="添加项" Height="520" Width="400"
+        MinHeight="520" MinWidth="400"
+        Background="{StaticResource ThemeColor}">
     <Window.DataContext>
-        <vm:MainViewModel/>
+        <vm:AddFileViewModel />
     </Window.DataContext>
-    <Grid>
-        
+    <Grid Margin="25">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBox Grid.Row="0" Margin="0,0,0,25"
+                 Style="{StaticResource StyleAddFileTitle}"
+                 FontSize="20" FontWeight="SemiBold" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" />
+
+        <StackPanel Grid.Row="2" Margin="0,0,0,15">
+            <TextBlock Text="账号" Style="{StaticResource StyleAddKeyText}" />
+            <TextBox Style="{StaticResource StyleAddKeyInput}" Text="{Binding Account, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Margin="0,0,0,15">
+            <TextBlock Text="密码" Style="{StaticResource StyleAddKeyText}" />
+            <TextBox Style="{StaticResource StyleAddKeyInput}" Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="取消" Foreground="#CCCCCC"
+                    Margin="0,0,10,0" Width="50" Height="32" Style="{StaticResource StyleButton}"
+                    Command="{Binding BackCommand}"/>
+            <Button Content="保存记录" Style="{StaticResource StyleSaveButton}" Foreground="#FFFFFF" Padding="20,6"
+                    Cursor="Hand" Command="{Binding SaveCommand}">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="3" />
+                    </Style>
+                </Button.Resources>
+            </Button>
+        </StackPanel>
     </Grid>
 </Window>
