@@ -96,6 +96,45 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="40" />
             </Grid.RowDefinitions>
+            
+            <ListView Grid.Row="0" ItemsSource="{Binding Keys}"
+                      Background="Transparent" BorderThickness="0"
+                      SelectedItem="{Binding SelectedKey, Mode=TwoWay}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem" BasedOn="{StaticResource StyleListViewItem}">
+                        <Setter Property="Helpers:ListViewItemClickBehavior.Command"
+                                Value="{Binding DataContext.ItemClickCommand, RelativeSource={RelativeSource AncestorType=ListView}}" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Height="27">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Background="#264F78" CornerRadius="2" 
+                                        Padding="6,1" Margin="0,0,12,0"
+                                        Height="20">
+                                    <TextBlock Text="tage" Foreground="#FFFFFF" FontSize="11"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Grid.Column="1" Text="{Binding Title}" Foreground="#D4D4D4" FontSize="13" VerticalAlignment="Center"/>
+                                <Button Style="{StaticResource StyleListActionButton}"
+                                        Grid.Column="3"
+                                        Height="20" Width="20">
+                                    <TextBlock Text="&#xE712;" FontFamily="Segoe MDL2 Assets" Foreground="#858585"
+                                               FontSize="12"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
 
             <Border Grid.Row="1" BorderBrush="{StaticResource BorderColor}" BorderThickness="0,1,0,0" Padding="20,8">
                 <Grid>
