@@ -8,4 +8,13 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Update="Services\DialogService.cs">
+      <DependentUpon>IDialogService.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Services\PromptService.cs">
+      <DependentUpon>IPromptService.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>
