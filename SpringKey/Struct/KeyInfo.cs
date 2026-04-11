@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SpringKey.Struct
 {
-    internal class KeyInfo
+    public class KeyInfo
     {
         public string Title { get; set; }
         public string Account { get; set; }
@@ -15,23 +15,23 @@ namespace SpringKey.Struct
         public string Hash { get; set; }
         public string Group { get; set; }
 
-        private string Null = "Null";
-        public KeyInfo(KeyFile _key, string _hash, string _group)
+        private readonly string _null = "Null";
+        public KeyInfo(KeyFile key, string hash, string group)
         {
-            Title = _key.Title;
-            Account = _key.Account;
-            Password = _key.Password;
-            Hash = _hash;
-            Group = _group;
+            Title = key.Title;
+            Account = key.Account;
+            Password = key.Password;
+            Hash = hash;
+            Group = group;
         }
 
         public KeyInfo()
         {
-            Title = Null;
-            Account = Null;
-            Password = Null;
-            Hash = Null;
-            Group = Null;
+            Title = _null;
+            Account = _null;
+            Password = _null;
+            Hash = _null;
+            Group = _null;
         }
     }
 }
