@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using SpringKey.Files;
 using SpringKey.MVVM;
 using SpringKey.Services;
+using SpringKey.Struct;
 
 namespace SpringKey.ViewModel
 {
@@ -19,6 +15,8 @@ namespace SpringKey.ViewModel
         private const string DefaultPrompt = "这里是提示语句";
 
         private CancellationTokenSource? _cts;
+        
+        private DateTime _lastCopyTime = DateTime.MinValue;
 
         private LinkFile? userLink;
 
@@ -36,6 +34,23 @@ namespace SpringKey.ViewModel
         public ICommand SignInCommand { get; }
         public ICommand SignOutCommand { get; }
         public ICommand AddFileCommand { get; }
+        public ICommand ItemClickCommand { get; }
+        
+        private KeyInfo? _selectedKey;
+
+        public KeyInfo? SelectedKey
+        {
+            get => _selectedKey;
+            set => SetProperty(ref _selectedKey, value);
+        }
+
+        private List<KeyInfo>? _keys;
+
+        public List<KeyInfo>? Keys
+        {
+            get => _keys;
+            set => SetProperty(ref _keys, value);
+        }
 
         private string? _selectedGroup;
 
@@ -45,6 +60,7 @@ namespace SpringKey.ViewModel
             set 
             {
                 SetProperty(ref _selectedGroup, value);
+                Update();
                 _ = PromptChange($"Surveillance: {_selectedGroup}");
             }
         }
@@ -116,8 +132,13 @@ namespace SpringKey.ViewModel
 
         #endregion
 
+        // 这是给设计器看的
         public MainViewModel() : this(new DialogService(new PromptService()),new PromptService())
         {
+            var testKey = new KeyFile("测试key标题","213875818","isPassword");
+            var testKeyInfo = new KeyInfo(testKey,"hash","全部");
+            Keys = new List<KeyInfo>();
+            Keys.Add(testKeyInfo);
         }
 
         public MainViewModel(IDialogService dialogService, IPromptService promptService)
@@ -128,12 +149,47 @@ namespace SpringKey.ViewModel
             appPath = Path.Combine(appPath, ".test");
             _dialogService = dialogService;
             _promptService = promptService;
+            ItemClickCommand = new RelayCommand<KeyInfo>(ItemClick);
             _promptService.PromptRequested += message => _ = PromptChange(message);
+            Update();
+        }
+
+        private void ItemClick(KeyInfo? key)
+        {
+            if (key == null) return;
+            if (!ReferenceEquals(SelectedKey, key))
+            {
+                SelectedKey = key;
+                _ = PromptChange("第一次选择");
+                return;
+            }
+
+            if ((DateTime.Now - _lastCopyTime).TotalMilliseconds < 300)
+            {
+                _ = PromptChange("多次点击,冷却中");
+                return;
+            }
+                
+            _lastCopyTime = DateTime.Now;
+            Clipboard.SetText(key.Password);
+            _ = PromptChange($"账号已复制,当前密码{key.Account}");
+        }
+        
+        private void Update()
+        {
+            if (userLink == null)
+                return;
+            if (!string.IsNullOrEmpty(_selectedGroup))
+            {
+                Keys = userIndex!.GetGroupInfo(_selectedGroup!);    
+            }
         }
 
         private void AddFile()
         {
-            _dialogService.ShowAddFileView();
+            var parameter = new AddKeyParameter(userIndex!, SelectedGroup!);
+            _dialogService.ShowAddFileView(parameter);
+            Update();
         }
 
         private void LoadData()
@@ -174,6 +230,7 @@ namespace SpringKey.ViewModel
             UninstallData();
             LoginVisibilityChange();
             _ = PromptChange($"SignOut"); 
+            Update();
         }
 
         #region utils
