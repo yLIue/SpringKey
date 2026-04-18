@@ -171,8 +171,8 @@ namespace SpringKey.ViewModel
             }
                 
             _lastCopyTime = DateTime.Now;
-            Clipboard.SetText(key.Password);
-            _ = PromptChange($"账号已复制,当前密码{key.Account}");
+            Clipboard.SetText(key.Account);
+            _ = PromptChange($"账号已复制,当前账号{key.Account}");
         }
         
         private void Update()
