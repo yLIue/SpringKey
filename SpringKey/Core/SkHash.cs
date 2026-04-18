@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 
-namespace SpringKey.Models
+namespace SpringKey.Core
 {
     public struct SkHash
     {

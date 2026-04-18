@@ -7,7 +7,7 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpringKey.Models
+namespace SpringKey.Core
 {
     internal class KeySpring
     {

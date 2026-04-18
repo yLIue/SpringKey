@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Documents;
 using System.Windows.Interop;
 
-namespace SpringKey.Models
+namespace SpringKey.Core
 {
     internal class Log
     {
