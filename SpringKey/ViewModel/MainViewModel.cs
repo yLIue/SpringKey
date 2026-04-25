@@ -36,17 +36,17 @@ namespace SpringKey.ViewModel
         public ICommand AddFileCommand { get; }
         public ICommand ItemClickCommand { get; }
         
-        private KeyInfo? _selectedKey;
+        private KeyItemViewModel? _selectedKey;
 
-        public KeyInfo? SelectedKey
+        public KeyItemViewModel? SelectedKey
         {
             get => _selectedKey;
             set => SetProperty(ref _selectedKey, value);
         }
 
-        private List<KeyInfo>? _keys;
+        private List<KeyItemViewModel>? _keys;
 
-        public List<KeyInfo>? Keys
+        public List<KeyItemViewModel>? Keys
         {
             get => _keys;
             set => SetProperty(ref _keys, value);
@@ -137,8 +137,9 @@ namespace SpringKey.ViewModel
         {
             var testKey = new KeyFile("测试key标题","213875818","isPassword");
             var testKeyInfo = new KeyInfo(testKey,"hash","全部");
-            Keys = new List<KeyInfo>();
-            Keys.Add(testKeyInfo);
+            var testKeyInfoVm = new KeyItemViewModel(testKeyInfo);
+            Keys = new List<KeyItemViewModel>();
+            Keys.Add(testKeyInfoVm);
         }
 
         public MainViewModel(IDialogService dialogService, IPromptService promptService)
@@ -149,12 +150,12 @@ namespace SpringKey.ViewModel
             appPath = Path.Combine(appPath, ".test");
             _dialogService = dialogService;
             _promptService = promptService;
-            ItemClickCommand = new RelayCommand<KeyInfo>(ItemClick);
+            ItemClickCommand = new RelayCommand<KeyItemViewModel>(ItemClick);
             _promptService.PromptRequested += message => _ = PromptChange(message);
             Update();
         }
 
-        private void ItemClick(KeyInfo? key)
+        private void CopyClick(KeyItemViewModel? key)
         {
             if (key == null) return;
             if (!ReferenceEquals(SelectedKey, key))

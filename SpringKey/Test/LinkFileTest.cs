@@ -26,11 +26,11 @@ namespace SpringKey.Test
         {
             LinkFile link = new LinkFile(_testPath, _userData.UserKey);
             IndexFile index = new IndexFile(link.UserPath, _userData.UserKey);
-            List<KeyInfo> Keys = index.GetGroupInfo(index.GroupIndex[0]);
-            foreach (var item in Keys)
-            {
-                Log.print($"group: {item.Group}\ntitle: {item.Title}");
-            }
+            // List<KeyInfo> Keys = index.GetGroupInfo(index.GroupIndex[0]);
+            // foreach (var item in Keys)
+            // {
+            //     Log.print($"group: {item.Group}\ntitle: {item.Title}");
+            // }
         }
 
         private static void Init(string _testPath, TestData _userData)

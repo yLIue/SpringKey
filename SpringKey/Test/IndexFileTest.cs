@@ -35,7 +35,7 @@ namespace SpringKey.Test
             // 1.获取分组
             string group = index.GroupIndex[1];
             // 2.index获取分组下的key
-            List<KeyInfo> keys = index.GetGroupInfo(group);
+            // List<KeyInfo> keys = index.GetGroupInfo(group);
             // 3.修改key
             //  3.1.修改内容
             KeyFile newKey = new KeyFile(
@@ -43,14 +43,14 @@ namespace SpringKey.Test
                 userData.Key1.Account + "_new",
                 userData.Key1.Password + "_new"
                 );
-            index.UpdataKey(keys[0], newKey);
-            //  3.2 修改分组
-            //      3.2.1移动分组
-            index.MoveGroup(keys[0], "新分组");
-            //      3.2.2.添加到分组
-            index.AddGroup(keys[0], "二次备份");
-            //      3.2.3.从分组移除
-            index.RemoveGroup(keys[0]);
+            // index.UpdataKey(keys[0], newKey);
+            // //  3.2 修改分组
+            // //      3.2.1移动分组
+            // index.MoveGroup(keys[0], "新分组");
+            // //      3.2.2.添加到分组
+            // index.AddGroup(keys[0], "二次备份");
+            // //      3.2.3.从分组移除
+            // index.RemoveGroup(keys[0]);
 
         }
 
