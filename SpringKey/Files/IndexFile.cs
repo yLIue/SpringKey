@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using SpringKey.Struct;
+using SpringKey.ViewModel;
 
 namespace SpringKey.Files
 {
@@ -131,14 +132,14 @@ namespace SpringKey.Files
         #endregion
 
         #region 关于group的api
-        public List<KeyInfo> GetGroupInfo(string _group)
+        public List<KeyItemViewModel> GetGroupInfo(string _group)
         {
-            List<KeyInfo> infos = new List<KeyInfo>();
+            List<KeyItemViewModel> infoVms = new List<KeyItemViewModel>();
             foreach (string keyHash in Groups[_group])
             {
-                infos.Add(LoadKeyFile(keyHash, _group));
+                infoVms.Add(new KeyItemViewModel(LoadKeyFile(keyHash, _group)));
             }
-            return infos;
+            return infoVms;
         }
 
         public void MoveGroup(KeyInfo _info, string _aimGroup)
