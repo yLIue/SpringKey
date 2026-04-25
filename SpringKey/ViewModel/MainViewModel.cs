@@ -16,7 +16,7 @@ namespace SpringKey.ViewModel
 
         private CancellationTokenSource? _cts;
         
-        private DateTime _lastCopyTime = DateTime.MinValue;
+        private DateTime _lastCopyAccountTime = DateTime.MinValue;
 
         private LinkFile? userLink;
 
@@ -31,10 +31,12 @@ namespace SpringKey.ViewModel
         #endregion
 
         #region MVVMDefinition
+
         public ICommand SignInCommand { get; }
         public ICommand SignOutCommand { get; }
         public ICommand AddFileCommand { get; }
         public ICommand ItemClickCommand { get; }
+        public ICommand CopyClickCommand { get; }
         
         private KeyItemViewModel? _selectedKey;
 
@@ -147,6 +149,7 @@ namespace SpringKey.ViewModel
             SignInCommand = new RelayCommand(SignIn);
             SignOutCommand = new RelayCommand(SignOut);
             AddFileCommand = new RelayCommand(AddFile);
+            CopyClickCommand = new RelayCommand<KeyItemViewModel>(CopyClick);
             appPath = Path.Combine(appPath, ".test");
             _dialogService = dialogService;
             _promptService = promptService;
@@ -158,6 +161,33 @@ namespace SpringKey.ViewModel
         private void CopyClick(KeyItemViewModel? key)
         {
             if (key == null) return;
+            
+            if (key.CopyText == "true")
+            {
+                _ = PromptChange("多次点击,冷却中");
+                return;
+            }
+            key.CopyText = "true";
+            Clipboard.SetText(key.Password);
+            _ = PromptChange($"密码已复制: {key.Password}");
+            _ = ResetCopyTextAsync(key);
+        }
+
+        private async Task ResetCopyTextAsync(KeyItemViewModel key)
+        {
+            await Task.Delay(2000);
+            key.CopyText = "copy";
+        }
+
+        private void ItemClick(KeyItemViewModel? key)
+        {
+            if (key == null) return;
+            if (SelectedKey != null && !ReferenceEquals(SelectedKey, key))
+            {
+                SelectedKey.ShowVisibility = Visibility.Hidden;
+                SelectedKey.CopyText = "copy";
+            }
+            key.ShowVisibility = Visibility.Visible;
             if (!ReferenceEquals(SelectedKey, key))
             {
                 SelectedKey = key;
@@ -165,13 +195,13 @@ namespace SpringKey.ViewModel
                 return;
             }
 
-            if ((DateTime.Now - _lastCopyTime).TotalMilliseconds < 300)
+            if ((DateTime.Now - _lastCopyAccountTime).TotalMilliseconds < 300)
             {
                 _ = PromptChange("多次点击,冷却中");
                 return;
             }
                 
-            _lastCopyTime = DateTime.Now;
+            _lastCopyAccountTime = DateTime.Now;
             Clipboard.SetText(key.Account);
             _ = PromptChange($"账号已复制,当前账号{key.Account}");
         }

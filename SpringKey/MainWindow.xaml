@@ -124,6 +124,25 @@
                                                VerticalAlignment="Center"/>
                                 </Border>
                                 <TextBlock Grid.Column="1" Text="{Binding Title}" Foreground="#D4D4D4" FontSize="13" VerticalAlignment="Center"/>
+                                
+                                <StackPanel Grid.Column="2" Orientation="Horizontal"
+                                            Margin="0,0,15,0"
+                                            Visibility="{Binding ShowVisibility}">
+                                    <TextBlock Text="Account:" Foreground="#6A9955" FontSize="12" Margin="0,0,5,0"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Account}" Foreground="#9CDCFE" FontFamily="Consolas"
+                                               FontSize="13" VerticalAlignment="Center"/>
+                                    <Button Margin="10,0,0,0"
+                                            Width="37"
+                                            Padding="0"
+                                            Style="{StaticResource StyleCopyButton}"
+                                            Command="{Binding DataContext.CopyClickCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                            CommandParameter="{Binding}">
+                                        <TextBlock Text="{Binding CopyText}" Foreground="Black" FontSize="11"/>
+                                    </Button>
+                                </StackPanel>
+                                
+                                
                                 <Button Style="{StaticResource StyleListActionButton}"
                                         Grid.Column="3"
                                         Height="20" Width="20">
