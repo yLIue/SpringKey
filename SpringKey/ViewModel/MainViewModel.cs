@@ -27,6 +27,8 @@ namespace SpringKey.ViewModel
         private readonly IDialogService _dialogService;
         
         private readonly IPromptService _promptService;
+        
+        private KeyItemViewModel? _lastKey;
 
         #endregion
 
@@ -43,7 +45,16 @@ namespace SpringKey.ViewModel
         public KeyItemViewModel? SelectedKey
         {
             get => _selectedKey;
-            set => SetProperty(ref _selectedKey, value);
+            set
+            {
+                SetProperty(ref _selectedKey, value);
+                if (_lastKey != null && !ReferenceEquals(_lastKey, _selectedKey))
+                {
+                    _lastKey.ShowVisibility = Visibility.Hidden;
+                    _lastKey.CopyText = "copy";
+                    ItemClick(_selectedKey);
+                }
+            }
         }
 
         private List<KeyItemViewModel>? _keys;
@@ -182,15 +193,15 @@ namespace SpringKey.ViewModel
         private void ItemClick(KeyItemViewModel? key)
         {
             if (key == null) return;
-            if (SelectedKey != null && !ReferenceEquals(SelectedKey, key))
+            if (_lastKey != null && !ReferenceEquals(_lastKey, key))
             {
-                SelectedKey.ShowVisibility = Visibility.Hidden;
-                SelectedKey.CopyText = "copy";
+                _lastKey.ShowVisibility = Visibility.Hidden;
+                _lastKey.CopyText = "copy";
             }
             key.ShowVisibility = Visibility.Visible;
-            if (!ReferenceEquals(SelectedKey, key))
+            if (!ReferenceEquals(_lastKey, key))
             {
-                SelectedKey = key;
+                _lastKey = key;
                 _ = PromptChange("第一次选择");
                 return;
             }
