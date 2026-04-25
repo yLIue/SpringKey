@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SpringKey.MVVM
 {
-    class ViewModelBase : INotifyPropertyChanged
+    public class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
         private readonly SynchronizationContext? _syncContext = SynchronizationContext.Current;
