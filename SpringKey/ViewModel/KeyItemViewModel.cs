@@ -21,7 +21,7 @@ public class KeyItemViewModel(KeyInfo model) : ViewModelBase
         set => SetProperty(ref _copyText, value);
     }
     
-    private Visibility _showVisibility = Visibility.Collapsed;
+    private Visibility _showVisibility = Visibility.Hidden;
     public Visibility ShowVisibility
     {
         get => _showVisibility;

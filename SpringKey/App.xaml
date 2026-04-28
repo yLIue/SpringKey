@@ -22,6 +22,7 @@
         <SolidColorBrush x:Key="ProfilePictureColor" Color="{StaticResource ColorLove}" />
         <SolidColorBrush x:Key="IcoColor" Color="{StaticResource ColorIco}" />
         <SolidColorBrush x:Key="TextForeground" Color="{StaticResource ColorTextPrimary}" />
+        <SolidColorBrush x:Key="LoveColor" Color="{StaticResource ColorLove}" />
 
         <SolidColorBrush x:Key="PasswordBackground" Color="{StaticResource ColorThreeArea}" />
         <SolidColorBrush x:Key="PassWordBorderColor" Color="{StaticResource ColorBorder}" />
@@ -203,7 +204,7 @@
         <Style x:Key="StyleListViewItem" TargetType="ListViewItem">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Margin" Value="0,1,0,0" />
-            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Padding" Value="0,4,8,4" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="Template">
                 <Setter.Value>
