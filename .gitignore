@@ -1,6 +1,10 @@
 # My
 .y_bin/
 
+# Claude
+CLAUDE.md
+.claude/
+
 # General
 .idea/
 .ignore/
