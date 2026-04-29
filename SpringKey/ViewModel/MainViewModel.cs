@@ -270,9 +270,11 @@ namespace SpringKey.ViewModel
         private void SignOut()
         {
             UninstallData();
+            Keys = null;
+            SelectedGroup = null;
+            _lastKey = null;
             LoginVisibilityChange();
-            _ = PromptChange($"SignOut"); 
-            Update();
+            _ = PromptChange($"SignOut");
         }
 
         #region utils
