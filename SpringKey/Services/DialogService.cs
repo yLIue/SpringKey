@@ -13,6 +13,7 @@ public class DialogService(IPromptService promptService) : IDialogService
     {
         var vm = new AddFileViewModel(this, _promptService, addKeyParameter);
         var win = new AddFileView { DataContext = vm };
+        win.Owner = Application.Current.MainWindow;
         win.ShowDialog();
     }
 

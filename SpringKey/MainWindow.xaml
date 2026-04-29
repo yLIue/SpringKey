@@ -8,6 +8,7 @@
         xmlns:Helpers="clr-namespace:SpringKey.Helpers"
         mc:Ignorable="d"
         Title="SpringKey" Height="700" Width="1000"
+        WindowStartupLocation="CenterScreen"
         Background="{StaticResource ThemeColor}">
     <Window.DataContext>
         <vm:MainViewModel />
