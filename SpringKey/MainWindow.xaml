@@ -78,10 +78,12 @@
                             <!-- 编辑模式 -->
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"
                                         Visibility="{Binding IsEditingUserName, Converter={StaticResource BoolToVis}}">
-                                <TextBox Text="{Binding EditingUserName, UpdateSourceTrigger=PropertyChanged}"
+                                <TextBox x:Name="RenameTextBox"
+                                         Text="{Binding EditingUserName, UpdateSourceTrigger=PropertyChanged}"
                                          FontSize="14" Foreground="White"
                                          Background="Transparent" BorderThickness="0"
-                                         Padding="0" CaretBrush="White">
+                                         Padding="0" CaretBrush="White"
+                                         IsVisibleChanged="RenameTextBox_IsVisibleChanged">
                                     <TextBox.InputBindings>
                                         <KeyBinding Key="Enter" Command="{Binding ConfirmEditUserNameCommand}" />
                                         <KeyBinding Key="Escape" Command="{Binding CancelEditUserNameCommand}" />

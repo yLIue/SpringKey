@@ -21,5 +21,14 @@ namespace SpringKey
             var vm = new MainViewModel(dialogService, promptService);
             DataContext = vm;
         }
+
+        private void RenameTextBox_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (RenameTextBox.IsVisible)
+            {
+                RenameTextBox.Focus();
+                RenameTextBox.CaretIndex = RenameTextBox.Text.Length;
+            }
+        }
     }
 }
