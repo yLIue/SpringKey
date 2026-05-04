@@ -172,15 +172,60 @@ namespace SpringKey.Files
                 Updata();
             }
         }
+
+        public bool RenameGroup(string _oldName, string _newName)
+        {
+            if (string.IsNullOrWhiteSpace(_newName)) return false;
+            if (_oldName == _newName) return false;
+            if (!Groups.ContainsKey(_oldName)) return false;
+            if (Groups.ContainsKey(_newName)) return false;
+            Groups[_newName] = Groups[_oldName];
+            Groups.Remove(_oldName);
+            int idx = groupIndex.IndexOf(_oldName);
+            groupIndex[idx] = _newName;
+            Updata();
+            return true;
+        }
+
+        public void DeleteGroup(string _groupName)
+        {
+            if (_groupName == ALLGorup || _groupName == "未分类") return;
+            if (!Groups.ContainsKey(_groupName)) return;
+            var hashes = Groups[_groupName].ToList();
+            Groups.Remove(_groupName);
+            groupIndex.Remove(_groupName);
+            foreach (var hash in hashes)
+            {
+                bool inOtherGroup = false;
+                foreach (var kv in Groups)
+                {
+                    if (kv.Key != ALLGorup && kv.Value.Contains(hash))
+                    {
+                        inOtherGroup = true;
+                        break;
+                    }
+                }
+                if (!inOtherGroup)
+                    Groups["未分类"].Add(hash);
+            }
+            Updata();
+        }
         #endregion
         #endregion
 
         #region utils
-        private void CreateGroup(string _groupName)
+        public void CreateGroup(string _groupName)
         {
             if (Groups.ContainsKey(_groupName)) return;
             Groups.Add(_groupName, new List<string>());
             groupIndex.Add(_groupName);
+        }
+
+        public void AddNewGroup(string _groupName)
+        {
+            if (Groups.ContainsKey(_groupName)) return;
+            CreateGroup(_groupName);
+            Updata();
         }
 
         private string KeySave(KeyFile _key)
@@ -197,20 +242,6 @@ namespace SpringKey.Files
 
         private void Updata()
         {
-            List<string> deleteGroups = new List<string>();
-            foreach (string group in groupIndex)
-            {
-                if (Groups[group].Count == 0)
-                {
-                    deleteGroups.Add(group);
-                }
-            }
-            foreach (string group in deleteGroups)
-            {
-                Groups.Remove(group);
-                groupIndex.Remove(group);
-            }
-
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(Version);
             foreach (string group in groupIndex)
