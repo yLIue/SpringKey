@@ -42,6 +42,13 @@ namespace SpringKey.ViewModel
         public ICommand RenameUserCommand { get; }
         public ICommand ConfirmEditUserNameCommand { get; }
         public ICommand CancelEditUserNameCommand { get; }
+        public ICommand AddGroupCommand { get; }
+        public ICommand ConfirmAddGroupCommand { get; }
+        public ICommand CancelAddGroupCommand { get; }
+        public ICommand RenameGroupCommand { get; }
+        public ICommand ConfirmRenameGroupCommand { get; }
+        public ICommand CancelRenameGroupCommand { get; }
+        public ICommand DeleteGroupCommand { get; }
         
         private KeyItemViewModel? _selectedKey;
 
@@ -124,6 +131,46 @@ namespace SpringKey.ViewModel
             set => SetProperty(ref _editingUserName, value);
         }
 
+        private bool _isAddingGroup;
+
+        public bool IsAddingGroup
+        {
+            get => _isAddingGroup;
+            set => SetProperty(ref _isAddingGroup, value);
+        }
+
+        private string _newGroupName = "";
+
+        public string NewGroupName
+        {
+            get => _newGroupName;
+            set => SetProperty(ref _newGroupName, value);
+        }
+
+        private bool _isRenamingGroup;
+
+        public bool IsRenamingGroup
+        {
+            get => _isRenamingGroup;
+            set => SetProperty(ref _isRenamingGroup, value);
+        }
+
+        private string _editingGroupOldName = "";
+
+        public string EditingGroupOldName
+        {
+            get => _editingGroupOldName;
+            set => SetProperty(ref _editingGroupOldName, value);
+        }
+
+        private string _editingGroupNewName = "";
+
+        public string EditingGroupNewName
+        {
+            get => _editingGroupNewName;
+            set => SetProperty(ref _editingGroupNewName, value);
+        }
+
 
         private Visibility _userVisibility = Visibility.Hidden;
 
@@ -183,6 +230,13 @@ namespace SpringKey.ViewModel
             RenameUserCommand = new RelayCommand(StartEditUserName);
             ConfirmEditUserNameCommand = new RelayCommand(ConfirmEditUserName);
             CancelEditUserNameCommand = new RelayCommand(CancelEditUserName);
+            AddGroupCommand = new RelayCommand(StartAddGroup);
+            ConfirmAddGroupCommand = new RelayCommand(ConfirmAddGroup);
+            CancelAddGroupCommand = new RelayCommand(CancelAddGroup);
+            RenameGroupCommand = new RelayCommand<string>(StartRenameGroup);
+            ConfirmRenameGroupCommand = new RelayCommand<string>(ConfirmRenameGroup);
+            CancelRenameGroupCommand = new RelayCommand(CancelRenameGroup);
+            DeleteGroupCommand = new RelayCommand<string>(DeleteGroup);
             appPath = Path.Combine(appPath, ".test");
             _dialogService = dialogService;
             _promptService = promptService;
@@ -278,6 +332,88 @@ namespace SpringKey.ViewModel
         private void CancelEditUserName()
         {
             IsEditingUserName = false;
+        }
+
+        private void StartAddGroup()
+        {
+            if (userIndex == null) return;
+            NewGroupName = "";
+            IsAddingGroup = true;
+        }
+
+        private void ConfirmAddGroup()
+        {
+            if (userIndex == null) return;
+            if (string.IsNullOrWhiteSpace(NewGroupName))
+            {
+                CancelAddGroup();
+                return;
+            }
+            userIndex.AddNewGroup(NewGroupName.Trim());
+            GroupIndex = userIndex.GroupIndex;
+            IsAddingGroup = false;
+            _ = PromptChange($"分组已添加: {NewGroupName.Trim()}");
+        }
+
+        private void CancelAddGroup()
+        {
+            IsAddingGroup = false;
+            NewGroupName = "";
+        }
+
+        private void StartRenameGroup(string? oldName)
+        {
+            if (userIndex == null || string.IsNullOrEmpty(oldName)) return;
+            if (oldName == "全部" || oldName == "未分类") return;
+            EditingGroupOldName = oldName;
+            EditingGroupNewName = oldName;
+            IsRenamingGroup = true;
+        }
+
+        private void ConfirmRenameGroup(string? unused)
+        {
+            if (userIndex == null) return;
+            var oldName = EditingGroupOldName;
+            var newName = EditingGroupNewName?.Trim() ?? "";
+            if (string.IsNullOrWhiteSpace(newName) || oldName == newName || string.IsNullOrEmpty(oldName))
+            {
+                CancelRenameGroup();
+                return;
+            }
+            if (!userIndex.RenameGroup(oldName, newName))
+            {
+                _ = PromptChange($"重命名失败: 分组名已存在或无效");
+                CancelRenameGroup();
+                return;
+            }
+            GroupIndex = userIndex.GroupIndex;
+            if (SelectedGroup == oldName)
+                SelectedGroup = newName;
+            IsRenamingGroup = false;
+            _ = PromptChange($"分组已重命名: {oldName} → {newName}");
+        }
+
+        private void CancelRenameGroup()
+        {
+            IsRenamingGroup = false;
+            EditingGroupOldName = "";
+            EditingGroupNewName = "";
+        }
+
+        private void DeleteGroup(string? groupName)
+        {
+            if (userIndex == null || string.IsNullOrEmpty(groupName)) return;
+            if (groupName == "全部" || groupName == "未分类") return;
+            if (!SpringKey.View.ConfirmDialog.Show(
+                $"确定要删除分组 \"{groupName}\" 吗？\n其中的密码项将移至「未分类」。",
+                "删除分组"))
+                return;
+            userIndex.DeleteGroup(groupName);
+            GroupIndex = userIndex.GroupIndex;
+            if (SelectedGroup == groupName)
+                SelectedGroup = null;
+            Keys = null;
+            _ = PromptChange($"分组已删除: {groupName}");
         }
 
         private void AddFile()

@@ -15,6 +15,7 @@
     </Window.DataContext>
     <Window.Resources>
         <Helpers:BoolToVisibilityConverter x:Key="BoolToVis" />
+        <Helpers:GroupEditVisibilityConverter x:Key="GroupEditVis" />
     </Window.Resources>
 
     <Grid>
@@ -28,8 +29,8 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="110" />
-                    <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
                 <Border Grid.Row="0" Padding="15" Height="110"
@@ -124,11 +125,149 @@
                     </StackPanel>
                 </Border>
 
-                <ListBox Grid.Row="1" BorderThickness="0" Margin="0,10"
+                <!-- 分组头部 -->
+                <Grid Grid.Row="1" Margin="15,10,10,0" Height="24"
+                      Visibility="{Binding UserVisibility}">
+                    <TextBlock Text="分组" Foreground="#888" FontSize="11"
+                               VerticalAlignment="Center" HorizontalAlignment="Left"
+                               Visibility="{Binding IsAddingGroup, Converter={StaticResource BoolToVis}, ConverterParameter=Invert}" />
+                    <Button Content="+" Style="{StaticResource StyleIcoButton}" Width="24" Height="24"
+                            VerticalAlignment="Center" HorizontalAlignment="Right"
+                            Visibility="{Binding IsAddingGroup, Converter={StaticResource BoolToVis}, ConverterParameter=Invert}"
+                            Command="{Binding AddGroupCommand}" />
+                    <!-- 添加分组输入 -->
+                    <Grid Visibility="{Binding IsAddingGroup, Converter={StaticResource BoolToVis}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="AddGroupTextBox" Grid.Column="0"
+                                 VerticalAlignment="Center"
+                                 Text="{Binding NewGroupName, UpdateSourceTrigger=PropertyChanged}"
+                                 FontSize="11" Foreground="White" CaretBrush="White"
+                                 Background="Transparent" BorderThickness="0" Padding="0"
+                                 IsVisibleChanged="AddGroupTextBox_IsVisibleChanged">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding ConfirmAddGroupCommand}" />
+                                <KeyBinding Key="Escape" Command="{Binding CancelAddGroupCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Style="{StaticResource StyleIcoButton}" Margin="2,0,0,0"
+                                    Command="{Binding ConfirmAddGroupCommand}">
+                                <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="10"
+                                           Foreground="#4EC9B0" />
+                            </Button>
+                            <Button Style="{StaticResource StyleIcoButton}"
+                                    Command="{Binding CancelAddGroupCommand}">
+                                <TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="10"
+                                           Foreground="{StaticResource IcoColor}" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+
+                <ListBox x:Name="GroupListBox" Grid.Row="2" BorderThickness="0" Margin="0,5"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ItemsSource="{Binding GroupIndex}"
                          SelectedItem="{Binding SelectedGroup}"
-                         Background="Transparent" />
+                         Background="Transparent"
+                         Visibility="{Binding UserVisibility}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- 查看模式 -->
+                                <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center"
+                                           Margin="10,5">
+                                    <TextBlock.Visibility>
+                                        <MultiBinding Converter="{StaticResource GroupEditVis}" ConverterParameter="Invert">
+                                            <Binding />
+                                            <Binding Path="DataContext.EditingGroupOldName"
+                                                     RelativeSource="{RelativeSource AncestorType=ListBox}" />
+                                            <Binding Path="DataContext.IsRenamingGroup"
+                                                     RelativeSource="{RelativeSource AncestorType=ListBox}" />
+                                        </MultiBinding>
+                                    </TextBlock.Visibility>
+                                </TextBlock>
+
+                                <!-- 编辑模式 -->
+                                <TextBox Grid.Column="0" VerticalAlignment="Center" Margin="10,5"
+                                         Text="{Binding DataContext.EditingGroupNewName, RelativeSource={RelativeSource AncestorType=ListBox}, UpdateSourceTrigger=PropertyChanged}"
+                                         FontSize="13" Foreground="White" CaretBrush="White"
+                                         Background="Transparent" BorderThickness="0" Padding="0"
+                                         IsVisibleChanged="RenameGroupTextBox_IsVisibleChanged"
+                                         LostFocus="RenameGroupTextBox_LostFocus">
+                                    <TextBox.Visibility>
+                                        <MultiBinding Converter="{StaticResource GroupEditVis}">
+                                            <Binding />
+                                            <Binding Path="DataContext.EditingGroupOldName"
+                                                     RelativeSource="{RelativeSource AncestorType=ListBox}" />
+                                            <Binding Path="DataContext.IsRenamingGroup"
+                                                     RelativeSource="{RelativeSource AncestorType=ListBox}" />
+                                        </MultiBinding>
+                                    </TextBox.Visibility>
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Key="Enter"
+                                                    Command="{Binding DataContext.ConfirmRenameGroupCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" />
+                                        <KeyBinding Key="Escape"
+                                                    Command="{Binding DataContext.CancelRenameGroupCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" />
+                                    </TextBox.InputBindings>
+                                </TextBox>
+
+                                <!-- ... 按钮 -->
+                                <Button Grid.Column="1" Style="{StaticResource StyleListActionButton}"
+                                        Width="20" Height="20" VerticalAlignment="Center"
+                                        Click="GroupMenuButton_Click">
+                                    <Button.Visibility>
+                                        <MultiBinding Converter="{StaticResource GroupEditVis}" ConverterParameter="Button">
+                                            <Binding />
+                                            <Binding Path="DataContext.EditingGroupOldName"
+                                                     RelativeSource="{RelativeSource AncestorType=ListBox}" />
+                                            <Binding Path="DataContext.IsRenamingGroup"
+                                                     RelativeSource="{RelativeSource AncestorType=ListBox}" />
+                                        </MultiBinding>
+                                    </Button.Visibility>
+                                    <TextBlock Text="&#xE712;" FontFamily="Segoe MDL2 Assets"
+                                               Foreground="#858585" FontSize="12" />
+                                    <Button.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="重命名" Click="GroupRenameMenuItem_Click" />
+                                            <MenuItem Header="删除分组" Click="GroupDeleteMenuItem_Click" />
+                                        </ContextMenu>
+                                    </Button.ContextMenu>
+                                </Button>
+
+                                <!-- 编辑模式按钮 -->
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
+                                    <StackPanel.Visibility>
+                                        <MultiBinding Converter="{StaticResource GroupEditVis}">
+                                            <Binding />
+                                            <Binding Path="DataContext.EditingGroupOldName"
+                                                     RelativeSource="{RelativeSource AncestorType=ListBox}" />
+                                            <Binding Path="DataContext.IsRenamingGroup"
+                                                     RelativeSource="{RelativeSource AncestorType=ListBox}" />
+                                        </MultiBinding>
+                                    </StackPanel.Visibility>
+                                    <Button Style="{StaticResource StyleIcoButton}" Margin="0,0,2,0"
+                                            Command="{Binding DataContext.ConfirmRenameGroupCommand, RelativeSource={RelativeSource AncestorType=ListBox}}">
+                                        <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="10"
+                                                   Foreground="#4EC9B0" />
+                                    </Button>
+                                    <Button Style="{StaticResource StyleIcoButton}"
+                                            Command="{Binding DataContext.CancelRenameGroupCommand, RelativeSource={RelativeSource AncestorType=ListBox}}">
+                                        <TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="10"
+                                                   Foreground="{StaticResource IcoColor}" />
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
 
             </Grid>
         </Border>
