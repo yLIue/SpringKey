@@ -39,6 +39,9 @@ namespace SpringKey.ViewModel
         public ICommand AddFileCommand { get; }
         public ICommand ItemClickCommand { get; }
         public ICommand CopyClickCommand { get; }
+        public ICommand RenameUserCommand { get; }
+        public ICommand ConfirmEditUserNameCommand { get; }
+        public ICommand CancelEditUserNameCommand { get; }
         
         private KeyItemViewModel? _selectedKey;
 
@@ -105,6 +108,22 @@ namespace SpringKey.ViewModel
             set => SetProperty(ref _userName, value);
         }
 
+        private bool _isEditingUserName;
+
+        public bool IsEditingUserName
+        {
+            get => _isEditingUserName;
+            set => SetProperty(ref _isEditingUserName, value);
+        }
+
+        private string _editingUserName = "";
+
+        public string EditingUserName
+        {
+            get => _editingUserName;
+            set => SetProperty(ref _editingUserName, value);
+        }
+
 
         private Visibility _userVisibility = Visibility.Hidden;
 
@@ -161,6 +180,9 @@ namespace SpringKey.ViewModel
             SignOutCommand = new RelayCommand(SignOut);
             AddFileCommand = new RelayCommand(AddFile);
             CopyClickCommand = new RelayCommand<KeyItemViewModel>(CopyClick);
+            RenameUserCommand = new RelayCommand(StartEditUserName);
+            ConfirmEditUserNameCommand = new RelayCommand(ConfirmEditUserName);
+            CancelEditUserNameCommand = new RelayCommand(CancelEditUserName);
             appPath = Path.Combine(appPath, ".test");
             _dialogService = dialogService;
             _promptService = promptService;
@@ -225,6 +247,37 @@ namespace SpringKey.ViewModel
             {
                 Keys = userIndex!.GetGroupInfo(_selectedGroup!);    
             }
+        }
+
+        private void StartEditUserName()
+        {
+            if (userLink == null) return;
+            EditingUserName = UserName;
+            IsEditingUserName = true;
+        }
+
+        private void ConfirmEditUserName()
+        {
+            if (userLink == null) return;
+            if (string.IsNullOrEmpty(EditingUserName) || EditingUserName == UserName)
+            {
+                CancelEditUserName();
+                return;
+            }
+            userLink.Rename(EditingUserName);
+            UserName = userLink.UserName;
+            UserInitial = UserName[0].ToString();
+            userIndex = new IndexFile(userLink.UserPath, UserKey);
+            GroupIndex = userIndex.GroupIndex;
+            Keys = null;
+            SelectedGroup = null;
+            IsEditingUserName = false;
+            _ = PromptChange($"用户名已更改为: {UserName}");
+        }
+
+        private void CancelEditUserName()
+        {
+            IsEditingUserName = false;
         }
 
         private void AddFile()

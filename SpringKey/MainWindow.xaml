@@ -13,6 +13,9 @@
     <Window.DataContext>
         <vm:MainViewModel />
     </Window.DataContext>
+    <Window.Resources>
+        <Helpers:BoolToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -64,16 +67,51 @@
                             <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center"
                                        Foreground="White" Text="{Binding UserInitial}" />
 
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
+                            <!-- 查看模式 -->
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"
+                                        Visibility="{Binding IsEditingUserName, Converter={StaticResource BoolToVis}, ConverterParameter=Invert}">
                                 <TextBlock Text="{Binding UserName}" FontSize="14"
                                            Foreground="White" />
                                 <TextBlock Text="使用中" FontSize="10" Foreground="#4EC9B0" />
                             </StackPanel>
 
-                            <Button Grid.Column="2" VerticalAlignment="Top" Style="{StaticResource StyleIcoButton}">
+                            <!-- 编辑模式 -->
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"
+                                        Visibility="{Binding IsEditingUserName, Converter={StaticResource BoolToVis}}">
+                                <TextBox Text="{Binding EditingUserName, UpdateSourceTrigger=PropertyChanged}"
+                                         FontSize="14" Foreground="White"
+                                         Background="Transparent" BorderThickness="0"
+                                         Padding="0" CaretBrush="White">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Key="Enter" Command="{Binding ConfirmEditUserNameCommand}" />
+                                        <KeyBinding Key="Escape" Command="{Binding CancelEditUserNameCommand}" />
+                                    </TextBox.InputBindings>
+                                </TextBox>
+                                <TextBlock Text="使用中" FontSize="10" Foreground="#4EC9B0" />
+                            </StackPanel>
+
+                            <!-- 查看模式按钮 -->
+                            <Button Grid.Column="2" VerticalAlignment="Top" Style="{StaticResource StyleIcoButton}"
+                                    Visibility="{Binding IsEditingUserName, Converter={StaticResource BoolToVis}, ConverterParameter=Invert}"
+                                    Command="{Binding RenameUserCommand}">
                                 <Path Data="{StaticResource IconEditGeometry}" Fill="{StaticResource IcoColor}"
                                       Height="12" Width="12" Stretch="Uniform" />
                             </Button>
+
+                            <!-- 编辑模式按钮 -->
+                            <StackPanel Grid.Column="2" VerticalAlignment="Top" Orientation="Horizontal"
+                                        Visibility="{Binding IsEditingUserName, Converter={StaticResource BoolToVis}}">
+                                <Button Style="{StaticResource StyleIcoButton}" Margin="0,0,2,0"
+                                        Command="{Binding ConfirmEditUserNameCommand}">
+                                    <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                               Foreground="#4EC9B0" />
+                                </Button>
+                                <Button Style="{StaticResource StyleIcoButton}"
+                                        Command="{Binding CancelEditUserNameCommand}">
+                                    <TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                               Foreground="{StaticResource IcoColor}" />
+                                </Button>
+                            </StackPanel>
                         </Grid>
 
                         <Button Content="退出登录" Margin="0,20,0,0" HorizontalAlignment="Left" FontSize="11" Width="70"

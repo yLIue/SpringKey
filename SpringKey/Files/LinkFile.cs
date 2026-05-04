@@ -14,7 +14,7 @@ namespace SpringKey.Files
     // 采用userKey构造,将userKey的哈希和userName和user的index文件的路径进行关联
     // 提供更改userName的功能
     // 可返回index文件
-    internal class LinkFile
+    public class LinkFile
     {
         private string RootPath;
         private string DataPath;
@@ -55,6 +55,19 @@ namespace SpringKey.Files
             string[] data = File.ReadAllLines(FilePath, Encoding.UTF8)[0].Split(' ');
             UserName = data[0];
             UserPath = data[1];
+        }
+
+        public void Rename(string newUserName)
+        {
+            if (UserName == newUserName) return;
+            string newPath = Path.Combine(DataPath, newUserName);
+            if (Directory.Exists(UserPath))
+                Directory.Move(UserPath, newPath);
+            else if (!Directory.Exists(newPath))
+                Directory.CreateDirectory(newPath);
+            UserName = newUserName;
+            UserPath = newPath;
+            Updata();
         }
 
         #region utils
