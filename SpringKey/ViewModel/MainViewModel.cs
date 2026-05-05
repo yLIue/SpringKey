@@ -458,6 +458,7 @@ namespace SpringKey.ViewModel
 
         private void SignOut()
         {
+            userIndex?.ClearCache();
             UninstallData();
             Keys = null;
             SelectedGroup = null;

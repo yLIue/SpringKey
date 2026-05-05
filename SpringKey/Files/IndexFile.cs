@@ -28,6 +28,8 @@ namespace SpringKey.Files
         private Dictionary<string,List<string>> Groups = new Dictionary<string, List<string>>();
         private List<string> groupIndex = new List<string>();
         private string ALLGorup = "全部";
+        private readonly Dictionary<string, KeyFile> _keyCache = new();
+        private readonly KeySpring _keySpring = new();
         public IReadOnlyList<String> GroupIndex => groupIndex.AsReadOnly();
 
         public IndexFile()
@@ -86,6 +88,7 @@ namespace SpringKey.Files
         {
             
             string hash = KeySave(_key);
+            _keyCache[hash] = _key;
             if (Groups["全部"].Contains(hash))
                 return;
             if(_class == "全部")
@@ -101,6 +104,7 @@ namespace SpringKey.Files
         {
             string newHash = KeySave(_newKey);
             if (_info.Hash == newHash) return;
+            string oldHash = _info.Hash;
             foreach (var kv in Groups.ToList())
             {
                 var list = kv.Value;
@@ -128,6 +132,8 @@ namespace SpringKey.Files
             }
             Updata();
             _info.Hash = newHash;
+            _keyCache.Remove(oldHash);
+            _keyCache[newHash] = _newKey;
         }
         #endregion
 
@@ -137,7 +143,8 @@ namespace SpringKey.Files
             List<KeyItemViewModel> infoVms = new List<KeyItemViewModel>();
             foreach (string keyHash in Groups[_group])
             {
-                infoVms.Add(new KeyItemViewModel(LoadKeyFile(keyHash, _group)));
+                var keyFile = LoadKeyFile(keyHash);
+                infoVms.Add(new KeyItemViewModel(keyFile, keyHash, _group));
             }
             return infoVms;
         }
@@ -228,6 +235,8 @@ namespace SpringKey.Files
             Updata();
         }
 
+        public void ClearCache() => _keyCache.Clear();
+
         private string KeySave(KeyFile _key)
         {
             string hash = SkHash.GetFileHash(_key.GetStringKey());
@@ -255,12 +264,16 @@ namespace SpringKey.Files
             File.WriteAllText(IndexPath, sb.ToString(), Encoding.UTF8);
         }
 
-        private KeyInfo LoadKeyFile(string _hash, string _group)
+        private KeyFile LoadKeyFile(string _hash)
         {
-            KeySpring keySpring = new KeySpring();
-            string filePath = Path.Combine(RootPath, _hash.Substring(0, 2), _hash.Substring(2) + ".skkey");
-            string data = keySpring.DecryptToString(File.ReadAllText(filePath, Encoding.UTF8), UserKey);
-            return new KeyInfo(KeyFile.LoadKey(data), _hash, _group);
+            if (_keyCache.TryGetValue(_hash, out var cached))
+                return cached;
+
+            string filePath = Path.Combine(RootPath, _hash[..2], _hash[2..] + ".skkey");
+            string data = _keySpring.DecryptToString(File.ReadAllText(filePath, Encoding.UTF8), UserKey);
+            var keyFile = KeyFile.LoadKey(data);
+            _keyCache[_hash] = keyFile;
+            return keyFile;
         }
         #endregion
     }
