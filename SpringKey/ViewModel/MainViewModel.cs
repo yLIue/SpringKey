@@ -437,6 +437,14 @@ namespace SpringKey.ViewModel
             Update();
         }
 
+        public void AddKeyToGroup(KeyItemViewModel keyVm, string targetGroup)
+        {
+            if (userIndex == null) return;
+            userIndex.AddGroup(keyVm.Model, targetGroup);
+            Keys = userIndex.GetGroupInfo(SelectedGroup!);
+            _ = PromptChange($"已添加到「{targetGroup}」");
+        }
+
         private void RemoveFromGroup(KeyItemViewModel? keyVm)
         {
             if (userIndex == null || keyVm == null) return;

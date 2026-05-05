@@ -124,6 +124,21 @@ namespace SpringKey
             editItem.Click += (_, _) => vm.EditKeyCommand.Execute(keyVm);
             menu.Items.Add(editItem);
 
+            // 添加到分组
+            if (vm.GroupIndex != null && vm.GroupIndex.Any(g => g != "全部" && g != "未分类" && g != keyVm.Group))
+            {
+                var addItem = new System.Windows.Controls.MenuItem { Header = "添加到分组..." };
+                addItem.Click += (_, _) =>
+                {
+                    menu.IsOpen = false;
+                    var targetGroup = View.GroupPickerDialog.Show(
+                        vm.GroupIndex.Where(g => g != "全部" && g != "未分类" && g != keyVm.Group));
+                    if (targetGroup != null)
+                        vm.AddKeyToGroup(keyVm, targetGroup);
+                };
+                menu.Items.Add(addItem);
+            }
+
             if (keyVm.Group is not "全部" and not "未分类")
             {
                 var removeItem = new System.Windows.Controls.MenuItem { Header = "移除分组" };
