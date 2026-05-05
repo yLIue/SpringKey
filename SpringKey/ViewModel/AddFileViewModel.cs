@@ -60,6 +60,12 @@ class AddFileViewModel : ViewModelBase
         _dialogService = dialogService;
         _promptService = promptService;
         _addKeyParameter = addKeyParameter;
+        if (addKeyParameter.ExistingKey is { } ek)
+        {
+            _title = ek.Title;
+            _account = ek.Account;
+            _password = ek.Password;
+        }
     }
     
     private void Back()
@@ -71,7 +77,10 @@ class AddFileViewModel : ViewModelBase
     private void Save()
     {
         KeyFile key = new KeyFile(_title,_account,_password);
-        _addKeyParameter.Index.AddKey(key,_addKeyParameter.Group);
+        if (_addKeyParameter.ExistingKey is { } ek)
+            _addKeyParameter.Index.UpdataKey(ek, key);
+        else
+            _addKeyParameter.Index.AddKey(key,_addKeyParameter.Group);
         _promptService.Show("保存成功");
         _dialogService.CloseAddFileView();
     }

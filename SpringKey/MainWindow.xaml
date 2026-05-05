@@ -330,9 +330,13 @@
 
                                 <Button Style="{StaticResource StyleListActionButton}"
                                         Grid.Column="4"
-                                        Height="20" Width="20">
+                                        Height="20" Width="20"
+                                        Click="KeyMenuButton_Click">
                                     <TextBlock Text="&#xE712;" FontFamily="Segoe MDL2 Assets" Foreground="#858585"
                                                FontSize="12" />
+                                    <Button.ContextMenu>
+                                        <ContextMenu Opened="KeyContextMenu_Opened"/>
+                                    </Button.ContextMenu>
                                 </Button>
                             </Grid>
                         </Border>

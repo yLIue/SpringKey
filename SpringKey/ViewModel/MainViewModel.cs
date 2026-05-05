@@ -49,6 +49,9 @@ namespace SpringKey.ViewModel
         public ICommand ConfirmRenameGroupCommand { get; }
         public ICommand CancelRenameGroupCommand { get; }
         public ICommand DeleteGroupCommand { get; }
+        public ICommand EditKeyCommand { get; }
+        public ICommand RemoveFromGroupCommand { get; }
+        public ICommand DeleteKeyCommand { get; }
         
         private KeyItemViewModel? _selectedKey;
 
@@ -237,6 +240,9 @@ namespace SpringKey.ViewModel
             ConfirmRenameGroupCommand = new RelayCommand<string>(ConfirmRenameGroup);
             CancelRenameGroupCommand = new RelayCommand(CancelRenameGroup);
             DeleteGroupCommand = new RelayCommand<string>(DeleteGroup);
+            EditKeyCommand = new RelayCommand<KeyItemViewModel>(EditKey);
+            RemoveFromGroupCommand = new RelayCommand<KeyItemViewModel>(RemoveFromGroup);
+            DeleteKeyCommand = new RelayCommand<KeyItemViewModel>(DeleteKey);
             appPath = Path.Combine(appPath, ".test");
             _dialogService = dialogService;
             _promptService = promptService;
@@ -421,6 +427,34 @@ namespace SpringKey.ViewModel
             var parameter = new AddKeyParameter(userIndex!, SelectedGroup!);
             _dialogService.ShowAddFileView(parameter);
             Update();
+        }
+
+        private void EditKey(KeyItemViewModel? keyVm)
+        {
+            if (userIndex == null || keyVm == null) return;
+            var parameter = new AddKeyParameter(userIndex, keyVm.Group, keyVm.Model);
+            _dialogService.ShowAddFileView(parameter);
+            Update();
+        }
+
+        private void RemoveFromGroup(KeyItemViewModel? keyVm)
+        {
+            if (userIndex == null || keyVm == null) return;
+            userIndex.RemoveGroup(keyVm.Model);
+            Keys = userIndex.GetGroupInfo(SelectedGroup!);
+            _ = PromptChange($"已从「{keyVm.Group}」移除");
+        }
+
+        private void DeleteKey(KeyItemViewModel? keyVm)
+        {
+            if (userIndex == null || keyVm == null) return;
+            if (!SpringKey.View.ConfirmDialog.Show(
+                $"确定要删除 \"{keyVm.Title}\" 吗？\n此操作不可恢复。",
+                "删除密码"))
+                return;
+            userIndex.DeleteKey(keyVm.Hash);
+            Keys = userIndex.GetGroupInfo(SelectedGroup!);
+            _ = PromptChange($"已删除: {keyVm.Title}");
         }
 
         private void LoadData()

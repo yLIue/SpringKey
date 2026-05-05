@@ -28,8 +28,10 @@ public class KeyItemViewModel(KeyInfo model) : ViewModelBase
         set => SetProperty(ref _showVisibility, value);
     }
     
-    public KeyItemViewModel(KeyFile key, string hash, string group) 
+    public KeyItemViewModel(KeyFile key, string hash, string group)
         : this(new KeyInfo(key, hash, group))
     {
     }
+
+    internal KeyInfo Model => _model;
 }

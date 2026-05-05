@@ -135,6 +135,19 @@ namespace SpringKey.Files
             _keyCache.Remove(oldHash);
             _keyCache[newHash] = _newKey;
         }
+
+        public void DeleteKey(string _hash)
+        {
+            foreach (var list in Groups.Values)
+                list.Remove(_hash);
+            _keyCache.Remove(_hash);
+            string dir = Path.Combine(RootPath, _hash[..2]);
+            string filePath = Path.Combine(dir, _hash[2..] + ".skkey");
+            if (File.Exists(filePath)) File.Delete(filePath);
+            if (Directory.Exists(dir) && !Directory.EnumerateFileSystemEntries(dir).Any())
+                Directory.Delete(dir);
+            Updata();
+        }
         #endregion
 
         #region 关于group的api
