@@ -185,12 +185,25 @@ namespace SpringKey.Files
         public void RemoveGroup(KeyInfo _info)
         {
             if (!Groups.ContainsKey(_info.Group)) return;
-            if (Groups[_info.Group].Contains(_info.Hash))
+            if (!Groups[_info.Group].Contains(_info.Hash)) return;
+            Groups[_info.Group].Remove(_info.Hash);
+
+            bool inOtherGroup = false;
+            foreach (var kv in Groups)
             {
-                Groups[_info.Group].Remove(_info.Hash);
-                _info.Group = ALLGorup;
-                Updata();
+                if (kv.Key != ALLGorup && kv.Key != _info.Group && kv.Value.Contains(_info.Hash))
+                {
+                    inOtherGroup = true;
+                    _info.Group = kv.Key;
+                    break;
+                }
             }
+            if (!inOtherGroup)
+            {
+                Groups["未分类"].Add(_info.Hash);
+                _info.Group = "未分类";
+            }
+            Updata();
         }
 
         public bool RenameGroup(string _oldName, string _newName)

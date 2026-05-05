@@ -129,7 +129,6 @@ namespace SpringKey
                 var removeItem = new System.Windows.Controls.MenuItem { Header = "移除分组" };
                 removeItem.Click += (_, _) => vm.RemoveFromGroupCommand.Execute(keyVm);
                 menu.Items.Add(removeItem);
-                menu.Items.Add(new System.Windows.Controls.Separator());
             }
 
             var deleteItem = new System.Windows.Controls.MenuItem { Header = "删除密码" };
