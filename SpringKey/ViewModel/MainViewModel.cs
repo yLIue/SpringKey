@@ -52,6 +52,7 @@ namespace SpringKey.ViewModel
         public ICommand EditKeyCommand { get; }
         public ICommand RemoveFromGroupCommand { get; }
         public ICommand DeleteKeyCommand { get; }
+        public ICommand ImportExportCommand { get; }
         
         private KeyItemViewModel? _selectedKey;
 
@@ -243,6 +244,7 @@ namespace SpringKey.ViewModel
             EditKeyCommand = new RelayCommand<KeyItemViewModel>(EditKey);
             RemoveFromGroupCommand = new RelayCommand<KeyItemViewModel>(RemoveFromGroup);
             DeleteKeyCommand = new RelayCommand<KeyItemViewModel>(DeleteKey);
+            ImportExportCommand = new RelayCommand(ShowImportExport);
             appPath = Path.Combine(appPath, ".test");
             _dialogService = dialogService;
             _promptService = promptService;
@@ -427,6 +429,11 @@ namespace SpringKey.ViewModel
             var parameter = new AddKeyParameter(userIndex!, SelectedGroup!);
             _dialogService.ShowAddFileView(parameter);
             Update();
+        }
+
+        private void ShowImportExport()
+        {
+            _dialogService.ShowImportExportView(appPath);
         }
 
         private void EditKey(KeyItemViewModel? keyVm)

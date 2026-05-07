@@ -25,4 +25,11 @@ public class DialogService(IPromptService promptService) : IDialogService
             win.Close();
         }
     }
+
+    public void ShowImportExportView(string basePath)
+    {
+        var win = new ImportExportWindow(basePath);
+        win.Owner = Application.Current.MainWindow;
+        win.ShowDialog();
+    }
 }

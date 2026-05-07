@@ -5,4 +5,5 @@ public interface IDialogService
 {
     void ShowAddFileView(AddKeyParameter addKeyParameter);
     void CloseAddFileView();
+    void ShowImportExportView(string basePath);
 }
