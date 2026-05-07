@@ -1,8 +1,6 @@
 using Microsoft.Win32;
 using SpringKey.Files;
 using SpringKey.MVVM;
-using SpringKey.Struct;
-using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 
@@ -11,21 +9,8 @@ namespace SpringKey.ViewModel;
 public class ImportExportViewModel : ViewModelBase
 {
     private readonly string _basePath;
-
-    public ObservableCollection<UserInfo> Users { get; } = new();
-
-    private UserInfo? _selectedUser;
-    public UserInfo? SelectedUser
-    {
-        get => _selectedUser;
-        set
-        {
-            if (_selectedUser == value) return;
-            _selectedUser = value;
-            OnPropertyChanged(nameof(SelectedUser));
-            (ExportBackupCommand as RelayCommand)?.RaiseCanExecuteChanged();
-        }
-    }
+    private readonly string _userHash;
+    private readonly string _userName;
 
     private string _statusMessage = "";
     public string StatusMessage
@@ -34,49 +19,28 @@ public class ImportExportViewModel : ViewModelBase
         set => SetProperty(ref _statusMessage, value);
     }
 
+    public string UserName => _userName;
+
     public ICommand ExportBackupCommand { get; }
     public ICommand ImportBackupCommand { get; }
 
-    public ImportExportViewModel(string basePath)
+    public ImportExportViewModel(string basePath, string userHash, string userName)
     {
         _basePath = basePath;
-        ExportBackupCommand = new RelayCommand(ExportBackup, CanExport);
+        _userHash = userHash;
+        _userName = userName;
+        ExportBackupCommand = new RelayCommand(ExportBackup);
         ImportBackupCommand = new RelayCommand(ImportBackup);
-        LoadUsers();
     }
-
-    private void LoadUsers()
-    {
-        try
-        {
-            var list = BackupFile.GetUserList(_basePath);
-            Users.Clear();
-            foreach (var u in list) Users.Add(u);
-            StatusMessage = $"检测到 {Users.Count} 个用户";
-            if (Users.Count > 0) SelectedUser = Users[0];
-        }
-        catch (Exception ex)
-        {
-            StatusMessage = $"加载用户失败：{ex.Message}";
-        }
-    }
-
-    private bool CanExport() => SelectedUser != null;
 
     private void ExportBackup()
     {
-        if (SelectedUser == null)
-        {
-            MessageBox.Show("请先选择要导出的用户。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
-            return;
-        }
-
         var dlg = new SaveFileDialog
         {
             Title = "导出为 .skbackup 文件",
             Filter = "SK Backup (*.skbackup)|*.skbackup",
             DefaultExt = ".skbackup",
-            FileName = $"{SelectedUser.UserName}.skbackup",
+            FileName = $"{_userName}.skbackup",
             AddExtension = true,
             OverwritePrompt = true
         };
@@ -85,9 +49,8 @@ public class ImportExportViewModel : ViewModelBase
 
         try
         {
-            BackupFile.ExportUser(SelectedUser.Hash, _basePath, dlg.FileName);
-            MessageBox.Show($"导出成功：{dlg.FileName}", "完成", MessageBoxButton.OK, MessageBoxImage.Information);
-            StatusMessage = $"导出：{SelectedUser.UserName} → {dlg.FileName}";
+            BackupFile.ExportUser(_userHash, _basePath, dlg.FileName);
+            StatusMessage = $"已导出到 {dlg.FileName}";
         }
         catch (Exception ex)
         {
@@ -112,8 +75,7 @@ public class ImportExportViewModel : ViewModelBase
         try
         {
             BackupFile.ImportUser(_basePath, dlg.FileName);
-            MessageBox.Show($"导入完成：{dlg.FileName}", "完成", MessageBoxButton.OK, MessageBoxImage.Information);
-            StatusMessage = $"已导入：{dlg.FileName}";
+            StatusMessage = $"已从 {dlg.FileName} 导入";
         }
         catch (Exception ex)
         {

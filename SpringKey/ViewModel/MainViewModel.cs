@@ -433,7 +433,8 @@ namespace SpringKey.ViewModel
 
         private void ShowImportExport()
         {
-            _dialogService.ShowImportExportView(appPath);
+            if (userLink == null) return;
+            _dialogService.ShowImportExportView(appPath, userLink.Hash, userLink.UserName);
         }
 
         private void EditKey(KeyItemViewModel? keyVm)

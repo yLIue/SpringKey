@@ -1,8 +1,8 @@
 <Window x:Class="SpringKey.View.ImportExportWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="导入导出" Height="380" Width="420"
-        MinHeight="380" MinWidth="420"
+        Title="导入导出" Height="280" Width="400"
+        MinHeight="280" MinWidth="400"
         WindowStartupLocation="CenterOwner"
         WindowStyle="ToolWindow"
         Background="{StaticResource ThemeColor}"
@@ -19,10 +19,12 @@
         <TextBlock Grid.Row="0" Text="备份与恢复" Foreground="#CCCCCC" FontSize="14" Margin="0,0,0,20"/>
 
         <StackPanel Grid.Row="1">
-            <TextBlock Text="选择用户" Foreground="#969696" FontSize="12" Margin="0,0,0,6"/>
-            <ComboBox ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}" DisplayMemberPath="UserName"
-                      Background="{StaticResource PasswordBackground}" Foreground="{StaticResource IcoColor}"
-                      BorderBrush="{StaticResource BorderColor}" Margin="0,0,0,15"/>
+            <TextBlock Foreground="#969696" FontSize="12" Margin="0,0,0,4">
+                <Run Text="当前用户："/>
+                <Run Text="{Binding UserName}" Foreground="#CCCCCC"/>
+            </TextBlock>
+            <TextBlock Text="导出该用户的全部数据为 .skbackup 文件，或从备份文件导入恢复。"
+                       Foreground="#969696" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,18"/>
         </StackPanel>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal">
@@ -35,6 +37,6 @@
         </StackPanel>
 
         <TextBlock Grid.Row="4" Text="{Binding StatusMessage}"
-                   Foreground="#969696" FontSize="12" Margin="0,15,0,0"/>
+                   Foreground="#969696" FontSize="12" Margin="0,10,0,0"/>
     </Grid>
 </Window>

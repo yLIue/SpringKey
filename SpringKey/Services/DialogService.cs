@@ -26,9 +26,9 @@ public class DialogService(IPromptService promptService) : IDialogService
         }
     }
 
-    public void ShowImportExportView(string basePath)
+    public void ShowImportExportView(string basePath, string userHash, string userName)
     {
-        var win = new ImportExportWindow(basePath);
+        var win = new ImportExportWindow(basePath, userHash, userName);
         win.Owner = Application.Current.MainWindow;
         win.ShowDialog();
     }

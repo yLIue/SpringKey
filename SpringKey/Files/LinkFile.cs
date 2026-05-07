@@ -20,8 +20,9 @@ namespace SpringKey.Files
         private string DataPath;
         private string UserHash;
         private string FilePath;
-        public string UserName; 
+        public string UserName;
         public string UserPath = "";
+        public string Hash => UserHash;
         private const string Default = "default";
 
         public LinkFile(string _appPath, string _userKey, string _userName = Default) 
