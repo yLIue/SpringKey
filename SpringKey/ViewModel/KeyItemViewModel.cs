@@ -27,7 +27,21 @@ public class KeyItemViewModel(KeyInfo model) : ViewModelBase
         get => _showVisibility;
         set => SetProperty(ref _showVisibility, value);
     }
-    
+
+    private bool _canRemoveFromGroup;
+    public bool CanRemoveFromGroup
+    {
+        get => _canRemoveFromGroup;
+        set => SetProperty(ref _canRemoveFromGroup, value);
+    }
+
+    private bool _canAddToGroup;
+    public bool CanAddToGroup
+    {
+        get => _canAddToGroup;
+        set => SetProperty(ref _canAddToGroup, value);
+    }
+
     public KeyItemViewModel(KeyFile key, string hash, string group)
         : this(new KeyInfo(key, hash, group))
     {

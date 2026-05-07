@@ -56,6 +56,7 @@ namespace SpringKey.ViewModel
         public ICommand DeleteKeyCommand { get; }
         public ICommand ImportExportCommand { get; }
         public ICommand BackupSettingsCommand { get; }
+        public ICommand AddKeyToGroupWithPickerCommand { get; }
         
         private KeyItemViewModel? _selectedKey;
 
@@ -249,6 +250,7 @@ namespace SpringKey.ViewModel
             DeleteKeyCommand = new RelayCommand<KeyItemViewModel>(DeleteKey);
             ImportExportCommand = new RelayCommand(ShowImportExport);
             BackupSettingsCommand = new RelayCommand(ShowBackupSettings);
+            AddKeyToGroupWithPickerCommand = new RelayCommand<KeyItemViewModel>(AddKeyToGroupWithPicker);
             appPath = Path.Combine(appPath, ".test");
             _dialogService = dialogService;
             _promptService = promptService;
@@ -312,7 +314,7 @@ namespace SpringKey.ViewModel
                 return;
             if (!string.IsNullOrEmpty(_selectedGroup))
             {
-                Keys = userIndex!.GetGroupInfo(_selectedGroup!);    
+                RefreshKeys();
             }
         }
 
@@ -467,15 +469,43 @@ namespace SpringKey.ViewModel
         {
             if (userIndex == null) return;
             userIndex.AddGroup(keyVm.Model, targetGroup);
-            Keys = userIndex.GetGroupInfo(SelectedGroup!);
+            RefreshKeys();
             _ = PromptChange($"已添加到「{targetGroup}」");
+        }
+
+        private void AddKeyToGroupWithPicker(KeyItemViewModel? keyVm)
+        {
+            if (userIndex == null || keyVm == null || GroupIndex == null) return;
+            var groups = GroupIndex.Where(g => g != "全部" && g != "未分类" && g != keyVm.Group);
+            var targetGroup = View.GroupPickerDialog.Show(groups);
+            if (targetGroup != null)
+                AddKeyToGroup(keyVm, targetGroup);
+        }
+
+        private void RefreshKeys()
+        {
+            if (userIndex == null) return;
+            SetKeys(userIndex.GetGroupInfo(SelectedGroup!));
+        }
+
+        private void SetKeys(List<KeyItemViewModel>? keys)
+        {
+            if (keys != null && GroupIndex != null)
+            {
+                foreach (var k in keys)
+                {
+                    k.CanRemoveFromGroup = k.Group is not "全部" and not "未分类";
+                    k.CanAddToGroup = GroupIndex.Any(g => g != "全部" && g != "未分类" && g != k.Group);
+                }
+            }
+            Keys = keys;
         }
 
         private void RemoveFromGroup(KeyItemViewModel? keyVm)
         {
             if (userIndex == null || keyVm == null) return;
             userIndex.RemoveGroup(keyVm.Model);
-            Keys = userIndex.GetGroupInfo(SelectedGroup!);
+            RefreshKeys();
             _ = PromptChange($"已从「{keyVm.Group}」移除");
         }
 
@@ -487,7 +517,7 @@ namespace SpringKey.ViewModel
                 "删除密码"))
                 return;
             userIndex.DeleteKey(keyVm.Hash);
-            Keys = userIndex.GetGroupInfo(SelectedGroup!);
+            RefreshKeys();
             _ = PromptChange($"已删除: {keyVm.Title}");
         }
 

@@ -84,7 +84,7 @@
                                          FontSize="14" Foreground="White"
                                          Background="Transparent" BorderThickness="0"
                                          Padding="0" CaretBrush="White"
-                                         IsVisibleChanged="RenameTextBox_IsVisibleChanged">
+                                         Helpers:TextBoxBehaviors.FocusAndSelectOnVisible="True">
                                     <TextBox.InputBindings>
                                         <KeyBinding Key="Enter" Command="{Binding ConfirmEditUserNameCommand}" />
                                         <KeyBinding Key="Escape" Command="{Binding CancelEditUserNameCommand}" />
@@ -146,7 +146,7 @@
                                  Text="{Binding NewGroupName, UpdateSourceTrigger=PropertyChanged}"
                                  FontSize="11" Foreground="White" CaretBrush="White"
                                  Background="Transparent" BorderThickness="0" Padding="0"
-                                 IsVisibleChanged="AddGroupTextBox_IsVisibleChanged">
+                                 Helpers:TextBoxBehaviors.FocusAndSelectOnVisible="True">
                             <TextBox.InputBindings>
                                 <KeyBinding Key="Enter" Command="{Binding ConfirmAddGroupCommand}" />
                                 <KeyBinding Key="Escape" Command="{Binding CancelAddGroupCommand}" />
@@ -200,8 +200,8 @@
                                          Text="{Binding DataContext.EditingGroupNewName, RelativeSource={RelativeSource AncestorType=ListBox}, UpdateSourceTrigger=PropertyChanged}"
                                          FontSize="13" Foreground="White" CaretBrush="White"
                                          Background="Transparent" BorderThickness="0" Padding="0"
-                                         IsVisibleChanged="RenameGroupTextBox_IsVisibleChanged"
-                                         LostFocus="RenameGroupTextBox_LostFocus">
+                                         Helpers:TextBoxBehaviors.FocusAndSelectOnVisible="True"
+                                         Helpers:TextBoxBehaviors.LostFocusCommand="{Binding DataContext.ConfirmRenameGroupCommand, RelativeSource={RelativeSource AncestorType=ListBox}}">
                                     <TextBox.Visibility>
                                         <MultiBinding Converter="{StaticResource GroupEditVis}">
                                             <Binding />
@@ -222,7 +222,8 @@
                                 <!-- ... 按钮 -->
                                 <Button Grid.Column="1" Style="{StaticResource StyleListActionButton}"
                                         Width="20" Height="20" VerticalAlignment="Center"
-                                        Click="GroupMenuButton_Click">
+                                        Click="GroupMenuButton_Click"
+                                        Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ListBox}}">
                                     <Button.Visibility>
                                         <MultiBinding Converter="{StaticResource GroupEditVis}" ConverterParameter="Button">
                                             <Binding />
@@ -236,8 +237,12 @@
                                                Foreground="#858585" FontSize="12" />
                                     <Button.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="重命名" Click="GroupRenameMenuItem_Click" />
-                                            <MenuItem Header="删除分组" Click="GroupDeleteMenuItem_Click" />
+                                            <MenuItem Header="重命名"
+                                                      Command="{Binding PlacementTarget.Tag.RenameGroupCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                            <MenuItem Header="删除分组"
+                                                      Command="{Binding PlacementTarget.Tag.DeleteGroupCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
                                         </ContextMenu>
                                     </Button.ContextMenu>
                                 </Button>
@@ -331,11 +336,27 @@
                                 <Button Style="{StaticResource StyleListActionButton}"
                                         Grid.Column="4"
                                         Height="20" Width="20"
-                                        Click="KeyMenuButton_Click">
+                                        Click="KeyMenuButton_Click"
+                                        Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ListView}}">
                                     <TextBlock Text="&#xE712;" FontFamily="Segoe MDL2 Assets" Foreground="#858585"
                                                FontSize="12" />
                                     <Button.ContextMenu>
-                                        <ContextMenu Opened="KeyContextMenu_Opened"/>
+                                        <ContextMenu>
+                                            <MenuItem Header="修改"
+                                                      Command="{Binding PlacementTarget.Tag.EditKeyCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                            <MenuItem Header="添加到分组..."
+                                                      Visibility="{Binding PlacementTarget.DataContext.CanAddToGroup, RelativeSource={RelativeSource AncestorType=ContextMenu}, Converter={StaticResource BoolToVis}}"
+                                                      Command="{Binding PlacementTarget.Tag.AddKeyToGroupWithPickerCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                            <MenuItem Header="移除分组"
+                                                      Visibility="{Binding PlacementTarget.DataContext.CanRemoveFromGroup, RelativeSource={RelativeSource AncestorType=ContextMenu}, Converter={StaticResource BoolToVis}}"
+                                                      Command="{Binding PlacementTarget.Tag.RemoveFromGroupCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                            <MenuItem Header="删除密码"
+                                                      Command="{Binding PlacementTarget.Tag.DeleteKeyCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                        </ContextMenu>
                                     </Button.ContextMenu>
                                 </Button>
                             </Grid>
