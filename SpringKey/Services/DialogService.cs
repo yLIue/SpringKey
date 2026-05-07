@@ -1,4 +1,5 @@
-﻿using SpringKey.View;
+﻿using SpringKey.Files;
+using SpringKey.View;
 using System.Windows;
 using SpringKey.Struct;
 using SpringKey.ViewModel;
@@ -8,7 +9,7 @@ namespace SpringKey.Services;
 public class DialogService(IPromptService promptService) : IDialogService
 {
     private readonly IPromptService _promptService = promptService;
-    
+
     public void ShowAddFileView(AddKeyParameter addKeyParameter)
     {
         var vm = new AddFileViewModel(this, _promptService, addKeyParameter);
@@ -29,6 +30,13 @@ public class DialogService(IPromptService promptService) : IDialogService
     public void ShowImportExportView(string basePath, string userHash, string userName)
     {
         var win = new ImportExportWindow(basePath, userHash, userName);
+        win.Owner = Application.Current.MainWindow;
+        win.ShowDialog();
+    }
+
+    public void ShowBackupSettingsView(AutoBackupService backupService)
+    {
+        var win = new BackupSettingsWindow(backupService);
         win.Owner = Application.Current.MainWindow;
         win.ShowDialog();
     }

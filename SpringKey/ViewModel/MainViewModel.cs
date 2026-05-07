@@ -25,9 +25,11 @@ namespace SpringKey.ViewModel
         private string appPath = AppDomain.CurrentDomain.BaseDirectory;
         
         private readonly IDialogService _dialogService;
-        
+
         private readonly IPromptService _promptService;
-        
+
+        private AutoBackupService? _backupService;
+
         private KeyItemViewModel? _lastKey;
 
         #endregion
@@ -53,6 +55,7 @@ namespace SpringKey.ViewModel
         public ICommand RemoveFromGroupCommand { get; }
         public ICommand DeleteKeyCommand { get; }
         public ICommand ImportExportCommand { get; }
+        public ICommand BackupSettingsCommand { get; }
         
         private KeyItemViewModel? _selectedKey;
 
@@ -245,9 +248,11 @@ namespace SpringKey.ViewModel
             RemoveFromGroupCommand = new RelayCommand<KeyItemViewModel>(RemoveFromGroup);
             DeleteKeyCommand = new RelayCommand<KeyItemViewModel>(DeleteKey);
             ImportExportCommand = new RelayCommand(ShowImportExport);
+            BackupSettingsCommand = new RelayCommand(ShowBackupSettings);
             appPath = Path.Combine(appPath, ".test");
             _dialogService = dialogService;
             _promptService = promptService;
+            _backupService = new AutoBackupService(appPath);
             ItemClickCommand = new RelayCommand<KeyItemViewModel>(ItemClick);
             _promptService.PromptRequested += message => _ = PromptChange(message);
             Update();
@@ -438,6 +443,16 @@ namespace SpringKey.ViewModel
             userIndex = new IndexFile(userLink.UserPath, UserKey);
             GroupIndex = userIndex.GroupIndex;
             Update();
+        }
+
+        private void ShowBackupSettings()
+        {
+            _dialogService.ShowBackupSettingsView(_backupService!);
+        }
+
+        public void Cleanup()
+        {
+            _backupService?.Dispose();
         }
 
         private void EditKey(KeyItemViewModel? keyVm)

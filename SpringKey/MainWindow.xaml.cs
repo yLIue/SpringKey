@@ -22,6 +22,13 @@ namespace SpringKey
             DataContext = vm;
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            if (DataContext is MainViewModel vm)
+                vm.Cleanup();
+            base.OnClosed(e);
+        }
+
         private void RenameTextBox_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (RenameTextBox.IsVisible)

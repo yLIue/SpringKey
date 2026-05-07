@@ -354,15 +354,21 @@
                                    VerticalAlignment="Center" />
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                Visibility="{Binding UserVisibility}">
-                        <Button Style="{StaticResource StyleIcoButton}" Margin="0,0,8,0"
-                                Command="{Binding ImportExportCommand}">
-                            <TextBlock Text="&#xE753;" FontFamily="Segoe MDL2 Assets" FontSize="14" />
-                        </Button>
-                        <Button Style="{StaticResource StyleIcoButton}" Margin="0,0,8,0"
-                                Command="{Binding AddFileCommand}">
-                            <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="14" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal"
+                                    Visibility="{Binding UserVisibility}">
+                            <Button Style="{StaticResource StyleIcoButton}" Margin="0,0,8,0"
+                                    Command="{Binding ImportExportCommand}">
+                                <TextBlock Text="&#xE753;" FontFamily="Segoe MDL2 Assets" FontSize="14" />
+                            </Button>
+                            <Button Style="{StaticResource StyleIcoButton}" Margin="0,0,8,0"
+                                    Command="{Binding AddFileCommand}">
+                                <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="14" />
+                            </Button>
+                        </StackPanel>
+                        <Button Style="{StaticResource StyleIcoButton}"
+                                Command="{Binding BackupSettingsCommand}">
+                            <TextBlock Text="&#xE823;" FontFamily="Segoe MDL2 Assets" FontSize="14" />
                         </Button>
                     </StackPanel>
                 </Grid>
