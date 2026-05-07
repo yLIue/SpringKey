@@ -435,6 +435,9 @@ namespace SpringKey.ViewModel
         {
             if (userLink == null) return;
             _dialogService.ShowImportExportView(appPath, userLink.Hash, userLink.UserName);
+            userIndex = new IndexFile(userLink.UserPath, UserKey);
+            GroupIndex = userIndex.GroupIndex;
+            Update();
         }
 
         private void EditKey(KeyItemViewModel? keyVm)

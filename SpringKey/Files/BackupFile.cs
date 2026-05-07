@@ -41,8 +41,6 @@ public static class BackupFile
         var sb = new StringBuilder();
         string linkPath = Path.Combine(basePath, "link", $"{hash}.sklink");
         string linkValue = File.ReadAllText(linkPath, Encoding.UTF8);
-        WriteSection(sb, "Link", $"{hash}.sklink", linkValue);
-
         string userPath = linkValue.Split(' ')[1];
         string indexPath = Path.Combine(userPath, ".skindex");
         WriteSection(sb, "index", ".skindex", File.ReadAllText(indexPath, Encoding.UTF8));
@@ -64,13 +62,11 @@ public static class BackupFile
         File.WriteAllText(outputPath, sb.ToString(), Encoding.UTF8);
     }
 
-    public static void ImportUser(string basePath, string inputPath)
+    public static void ImportUser(string basePath, string inputPath, string userPath)
     {
         string content = File.ReadAllText(inputPath, Encoding.UTF8);
         if (string.IsNullOrEmpty(content))
             throw new ArgumentException("Input file is empty");
-
-        string? userPath = null;
 
         using var reader = new StringReader(content);
         string? currentSection = null;
@@ -84,7 +80,7 @@ public static class BackupFile
             if (!string.IsNullOrEmpty(trimmed) && trimmed.StartsWith('[') && trimmed.EndsWith(']'))
             {
                 if (currentSection != null && currentFileName != null)
-                    ProcessSection(currentSection, currentFileName, string.Join(Environment.NewLine, contentLines), basePath, ref userPath);
+                    ProcessSection(currentSection, currentFileName, string.Join(Environment.NewLine, contentLines), basePath, userPath);
 
                 currentSection = trimmed[1..^1];
                 currentFileName = reader.ReadLine();
@@ -99,7 +95,7 @@ public static class BackupFile
         }
 
         if (currentSection != null && currentFileName != null)
-            ProcessSection(currentSection, currentFileName, string.Join(Environment.NewLine, contentLines), basePath, ref userPath);
+            ProcessSection(currentSection, currentFileName, string.Join(Environment.NewLine, contentLines), basePath, userPath);
     }
 
     private static void WriteSection(StringBuilder sb, string section, string fileName, string value)
@@ -112,32 +108,17 @@ public static class BackupFile
             sb.AppendLine(value);
     }
 
-    private static void ProcessSection(string section, string fileName, string content, string basePath, ref string? userPath)
+    private static void ProcessSection(string section, string fileName, string content, string basePath, string userPath)
     {
         switch (section)
         {
-            case "Link":
-                string linkDir = Path.Combine(basePath, "link");
-                Directory.CreateDirectory(linkDir);
-                File.WriteAllText(Path.Combine(linkDir, fileName), content, Encoding.UTF8);
-
-                int spaceIdx = content.IndexOf(' ');
-                if (spaceIdx < 0)
-                    throw new InvalidDataException("Invalid link file: missing space separator");
-                userPath = content[(spaceIdx + 1)..].Trim();
-                break;
-
             case "index":
-                if (userPath == null)
-                    throw new InvalidOperationException("Link section must precede index");
                 byte[] indexData = Convert.FromBase64String(content);
                 Directory.CreateDirectory(userPath);
                 File.WriteAllText(Path.Combine(userPath, fileName), Encoding.UTF8.GetString(indexData), Encoding.UTF8);
                 break;
 
             case "key":
-                if (userPath == null)
-                    throw new InvalidOperationException("Link section must precede key");
                 if (fileName.Length < 2)
                     throw new InvalidDataException($"Invalid key file name: {fileName}");
 

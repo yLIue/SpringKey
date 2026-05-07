@@ -1,6 +1,8 @@
 using Microsoft.Win32;
 using SpringKey.Files;
 using SpringKey.MVVM;
+using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 
@@ -74,7 +76,10 @@ public class ImportExportViewModel : ViewModelBase
 
         try
         {
-            BackupFile.ImportUser(_basePath, dlg.FileName);
+            string linkPath = Path.Combine(_basePath, "link", $"{_userHash}.sklink");
+            string linkValue = File.ReadAllText(linkPath, Encoding.UTF8);
+            string userPath = linkValue.Split(' ')[1];
+            BackupFile.ImportUser(_basePath, dlg.FileName, userPath);
             StatusMessage = $"已从 {dlg.FileName} 导入";
         }
         catch (Exception ex)

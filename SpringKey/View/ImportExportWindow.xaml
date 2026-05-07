@@ -21,7 +21,7 @@
         <StackPanel Grid.Row="1">
             <TextBlock Foreground="#969696" FontSize="12" Margin="0,0,0,4">
                 <Run Text="当前用户："/>
-                <Run Text="{Binding UserName}" Foreground="#CCCCCC"/>
+                <Run Text="{Binding UserName, Mode=OneWay}" Foreground="#CCCCCC"/>
             </TextBlock>
             <TextBlock Text="导出该用户的全部数据为 .skbackup 文件，或从备份文件导入恢复。"
                        Foreground="#969696" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,18"/>
