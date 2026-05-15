@@ -271,7 +271,7 @@ namespace SpringKey.Files
 
             string filePath = Path.Combine(fileDirPath, hash.Substring(2) + ".skkey");
 
-            File.WriteAllText(filePath, _key.Save(UserKey), Encoding.UTF8);
+            File.WriteAllText(filePath, _key.Save(UserKey), new UTF8Encoding(false));
             return hash;
         }
 
