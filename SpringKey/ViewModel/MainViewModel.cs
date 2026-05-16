@@ -454,6 +454,7 @@ namespace SpringKey.ViewModel
 
         public void Cleanup()
         {
+            _backupService?.BackupTemp();
             _backupService?.Dispose();
         }
 

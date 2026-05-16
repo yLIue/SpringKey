@@ -96,36 +96,57 @@ public class AutoBackupService : IDisposable
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             string backupPath = Path.Combine(_backupDir, $"auto_{timestamp}");
             Directory.CreateDirectory(backupPath);
-
-            string linksDir = Path.Combine(backupPath, "links");
-            Directory.CreateDirectory(linksDir);
-
-            var users = BackupFile.GetUserList(_basePath);
-            int count = 0;
-            foreach (var user in users)
-            {
-                try
-                {
-                    string srcLink = Path.Combine(_basePath, "link", $"{user.Hash}.sklink");
-                    string dstLink = Path.Combine(linksDir, $"{user.Hash}.sklink");
-                    File.Copy(srcLink, dstLink, true);
-
-                    string backupFile = Path.Combine(backupPath, $"{user.UserName}.skbackup");
-                    BackupFile.ExportUser(user.Hash, _basePath, backupFile);
-                    count++;
-                }
-                catch { }
-            }
+            DoBackup(backupPath);
 
             _settings.LastBackup = DateTime.Now;
             SaveSettings();
-            StatusChanged?.Invoke($"备份完成：{count} 个用户  {timestamp}");
+            StatusChanged?.Invoke($"备份完成：{GetUserCount(backupPath)} 个用户  {timestamp}");
             BackupsChanged?.Invoke();
         }
         finally
         {
             _isBackingUp = false;
         }
+    }
+
+    public void BackupTemp()
+    {
+        try
+        {
+            string backupPath = Path.Combine(_backupDir, "temp_backup");
+            if (Directory.Exists(backupPath))
+                Directory.Delete(backupPath, true);
+            Directory.CreateDirectory(backupPath);
+            DoBackup(backupPath);
+            BackupsChanged?.Invoke();
+        }
+        catch { }
+    }
+
+    private void DoBackup(string backupPath)
+    {
+        string linksDir = Path.Combine(backupPath, "links");
+        Directory.CreateDirectory(linksDir);
+
+        var users = BackupFile.GetUserList(_basePath);
+        foreach (var user in users)
+        {
+            try
+            {
+                string srcLink = Path.Combine(_basePath, "link", $"{user.Hash}.sklink");
+                string dstLink = Path.Combine(linksDir, $"{user.Hash}.sklink");
+                File.Copy(srcLink, dstLink, true);
+
+                string backupFile = Path.Combine(backupPath, $"{user.UserName}.skbackup");
+                BackupFile.ExportUser(user.Hash, _basePath, backupFile);
+            }
+            catch { }
+        }
+    }
+
+    private static int GetUserCount(string backupPath)
+    {
+        return Directory.GetFiles(backupPath, "*.skbackup").Length;
     }
 
     public List<BackupInfo> GetBackups()
@@ -136,6 +157,18 @@ public class AutoBackupService : IDisposable
         foreach (string dir in Directory.GetDirectories(_backupDir))
         {
             string dirName = Path.GetFileName(dir);
+            if (dirName == "temp_backup")
+            {
+                backups.Add(new BackupInfo
+                {
+                    DirectoryPath = dir,
+                    CreatedAt = Directory.GetLastWriteTime(dir),
+                    UserCount = GetUserCount(dir),
+                    IsTemp = true
+                });
+                continue;
+            }
+
             if (!dirName.StartsWith("auto_")) continue;
 
             string dateStr = dirName[5..];
@@ -144,7 +177,7 @@ public class AutoBackupService : IDisposable
                     System.Globalization.DateTimeStyles.None, out createdAt))
                 createdAt = Directory.GetCreationTime(dir);
 
-            int userCount = Directory.GetFiles(dir, "*.skbackup").Length;
+            int userCount = GetUserCount(dir);
             backups.Add(new BackupInfo
             {
                 DirectoryPath = dir,

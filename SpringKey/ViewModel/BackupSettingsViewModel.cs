@@ -42,6 +42,7 @@ public class BackupSettingsViewModel : ViewModelBase
     public record IntervalOption(string Label, int Minutes);
     public List<IntervalOption> Intervals { get; } = new()
     {
+        new("5 分钟", 5),
         new("15 分钟", 15),
         new("30 分钟", 30),
         new("1 小时", 60),
