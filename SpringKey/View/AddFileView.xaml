@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:vm="clr-namespace:SpringKey.ViewModel"
+        xmlns:helpers="clr-namespace:SpringKey.Helpers"
         mc:Ignorable="d"
         Title="添加项" Height="620" Width="420"
         MinHeight="620" MinWidth="420"
@@ -153,7 +154,8 @@
                                       IsEditable="True"
                                       Style="{StaticResource StyleBindingTypeComboBox}"
                                       Text="{Binding Type, UpdateSourceTrigger=PropertyChanged}"
-                                      Margin="0,0,6,0">
+                                      Margin="0,0,6,0"
+                                      helpers:ComboBoxHelper.DisableSelectAll="True">
                                 <ComboBoxItem Content="phone" />
                                 <ComboBoxItem Content="email" />
                                 <ComboBoxItem Content="github" />
