@@ -13,8 +13,9 @@ namespace SpringKey.Files
         public string Description { get; set; } = "";
         /// <summary>用途(一般是网站或app名字)</summary>
         public string Place { get; set; } = "";
-        /// <summary>旧密码</summary>
-        public string PasswordPrev { get; set; } = "";
+        private readonly List<string> _passwordPrev = new();
+        /// <summary>曾用密码，最新在前</summary>
+        public IReadOnlyList<string> PasswordPrev => _passwordPrev;
         
         private readonly Dictionary<string, string> _binding = new();
         /// <summary>绑定信息</summary>
@@ -61,6 +62,25 @@ namespace SpringKey.Files
         /// <returns>存在并移除成功返回 true</returns>
         public bool RemoveBinding(string type) => _binding.Remove(type);
 
+        /// <summary>批量添加曾用密码</summary>
+        public void AddPasswordPrevEntries(IEnumerable<string> entries)
+        {
+            foreach (var e in entries)
+                if (!string.IsNullOrEmpty(e))
+                    _passwordPrev.Add(e);
+        }
+
+        /// <summary>记录旧密码到曾用密码列表（去重后推到最前）</summary>
+        public void RecordPassword(string oldPassword)
+        {
+            if (string.IsNullOrEmpty(oldPassword)) return;
+            _passwordPrev.Remove(oldPassword);
+            _passwordPrev.Insert(0, oldPassword);
+        }
+
+        /// <summary>删除指定曾用密码</summary>
+        public bool RemovePasswordPrev(string password) => _passwordPrev.Remove(password);
+
         /// <summary>获取明文</summary>
         public string Serialize()
         {
@@ -71,7 +91,12 @@ namespace SpringKey.Files
             WriteSection(sb, "password", Password);
             WriteSection(sb, "place", Place);
             WriteSection(sb, "description", Description);
-            WriteSection(sb, "passwordPrev", PasswordPrev);
+            if (_passwordPrev.Count > 0)
+            {
+                sb.AppendLine("[passwordPrev]");
+                foreach (var p in _passwordPrev)
+                    sb.AppendLine($"\t{p}");
+            }
             foreach (var kv in _binding)
                 WriteSection(sb, $"binding][{kv.Key}", kv.Value);
             return sb.ToString();
@@ -157,7 +182,7 @@ namespace SpringKey.Files
                 case "password": key.Password = value; break;
                 case "place": key.Place = value; break;
                 case "description": descSb.Append(value).Append('\n'); break;
-                case "passwordPrev": key.PasswordPrev = value; break;
+                case "passwordPrev": key._passwordPrev.Add(value); break;
                 case "binding": key.AddBinding(bindingType, value); break;
             }
         }

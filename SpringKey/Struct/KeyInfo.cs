@@ -13,7 +13,9 @@ namespace SpringKey.Struct
         public string Account { get; set; }
         public string Password { get; set; }
         public string Place { get; set; }
-        public string PasswordPrev { get; set; }
+        public List<string> PasswordPrev { get; set; } = new();
+        public string Description { get; set; }
+        public Dictionary<string, string> Binding { get; set; }
         public string Hash { get; set; }
         public string Group { get; set; }
 
@@ -24,7 +26,9 @@ namespace SpringKey.Struct
             Account = key.Account;
             Password = key.Password;
             Place = key.Place;
-            PasswordPrev = key.PasswordPrev;
+            PasswordPrev = new List<string>(key.PasswordPrev);
+            Description = key.Description;
+            Binding = new Dictionary<string, string>(key.Binding);
             Hash = hash;
             Group = group;
         }
@@ -35,7 +39,9 @@ namespace SpringKey.Struct
             Account = _null;
             Password = _null;
             Place = _null;
-            PasswordPrev = _null;
+            PasswordPrev = new List<string>();
+            Description = "";
+            Binding = new Dictionary<string, string>();
             Hash = _null;
             Group = _null;
         }
