@@ -52,6 +52,14 @@ namespace SpringKey.Files
             UserPath = data[1];
         }
 
+        public void Delete()
+        {
+            if (File.Exists(FilePath))
+                File.Delete(FilePath);
+            if (Directory.Exists(UserPath))
+                Directory.Delete(UserPath, true);
+        }
+
         public void Rename(string newUserName)
         {
             if (UserName == newUserName) return;
