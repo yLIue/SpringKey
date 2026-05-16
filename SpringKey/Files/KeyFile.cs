@@ -1,133 +1,165 @@
-﻿using SpringKey.Core;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+using SpringKey.Core;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace SpringKey.Files
 {
     public class KeyFile
     {
-        public const string KeyVersion = "skkey_ver0.1";
+        public const string KeyVersion = "skkey-ver1.0.0";
         public string Title { get; set; }
         public string Account { get; set; }
         public string Password { get; set; }
+        /// <summary>描述</summary>
         public string Description { get; set; } = "";
+        /// <summary>用途(一般是网站或app名字)</summary>
+        public string Place { get; set; } = "";
+        /// <summary>旧密码</summary>
+        public string PasswordPrev { get; set; } = "";
+        
+        private readonly Dictionary<string, string> _binding = new();
+        /// <summary>绑定信息</summary>
+        public IReadOnlyDictionary<string, string> Binding => _binding;
 
-        private List<String> tags = new List<string>();
-        public IReadOnlyList<String> Tags => tags.AsReadOnly();
-        public KeyFile(string _title, string _account, string _password) {
-            Title = _title;
-            Account = _account;
-            Password = _password;
+        /// <summary>创建密码项</summary>
+        /// <param name="title">标题</param>
+        /// <param name="account">账号</param>
+        /// <param name="password">密码</param>
+        public KeyFile(string title, string account, string password)
+        {
+            Title = title;
+            Account = account;
+            Password = password;
         }
 
-        #region api
-        // 判断是否是有效的Key
-        public bool IsKey()
+        private KeyFile()
         {
-            if (Title == "" || Password == "" || Account == "")
-                return false;
+            Title = "";
+            Account = "";
+            Password = "";
+        }
+
+        /// <summary>判断是否为有效密码项</summary>
+        /// <returns>标题、账号、密码均非空时返回 true</returns>
+        public bool IsValid() =>
+            !string.IsNullOrWhiteSpace(Title)
+            && !string.IsNullOrWhiteSpace(Account)
+            && !string.IsNullOrWhiteSpace(Password);
+
+        /// <summary>添加绑定信息</summary>
+        /// <param name="type">绑定类型（如 email、phone）</param>
+        /// <param name="value">绑定值</param>
+        /// <returns>添加成功返回 true；type 或 value 为空则返回 false</returns>
+        public bool AddBinding(string type, string value)
+        {
+            if (string.IsNullOrWhiteSpace(type) || string.IsNullOrWhiteSpace(value)) return false;
+            _binding[type.Trim()] = value.Trim();
             return true;
         }
 
-        // 加密并输出字符串
-        public string Save(string _userKey)
+        /// <summary>移除绑定信息</summary>
+        /// <param name="type">绑定类型</param>
+        /// <returns>存在并移除成功返回 true</returns>
+        public bool RemoveBinding(string type) => _binding.Remove(type);
+
+        /// <summary>获取明文</summary>
+        public string Serialize()
         {
-            var keySpring = new KeySpring();
-            return keySpring.EncryptString(GetStringKey(), _userKey);
+            var sb = new StringBuilder();
+            sb.AppendLine(KeyVersion);
+            WriteSection(sb, "title", Title);
+            WriteSection(sb, "account", Account);
+            WriteSection(sb, "password", Password);
+            WriteSection(sb, "place", Place);
+            WriteSection(sb, "description", Description);
+            WriteSection(sb, "passwordPrev", PasswordPrev);
+            foreach (var kv in _binding)
+                WriteSection(sb, $"binding][{kv.Key}", kv.Value);
+            return sb.ToString();
         }
 
-        #region tag
-        public bool AddTag(string _tag)
+        /// <summary>获取密文</summary>
+        /// <param name="keySpring">密钥加密器</param>
+        /// <param name="userKey">用户密钥</param>
+        public string Encrypt(KeySpring keySpring, string userKey)
         {
-            if (string.IsNullOrWhiteSpace(_tag)) return false;
-            _tag = _tag.Trim();
-            if (tags.Contains(_tag)) return false;
-            tags.Add(_tag);
-            return true;
+            return keySpring.EncryptString(Serialize(), userKey);
         }
 
-        public bool RemoveTag(string _tag) => tags.Remove(_tag);
-
-        public bool RenameTag(string _oldTag, string _newTag)
+        private static void WriteSection(StringBuilder sb, string name, string value)
         {
-            if (string.IsNullOrWhiteSpace(_newTag)) return false;
-            int indexFind = tags.IndexOf(_oldTag);
-            if (indexFind < 0) return false;
-            tags[indexFind] = _newTag.Trim();
-            return true;
+            if (string.IsNullOrEmpty(value)) return;
+            sb.AppendLine($"[{name}]");
+            foreach (var line in value.Split('\n'))
+                sb.AppendLine($"\t{line}");
         }
-        #endregion
-
-        // 输出字符串
-        public string GetStringKey()
+        
+        /// <summary>解密</summary>
+        /// <param name="keySpring">密钥加密器</param>
+        /// <param name="encryptedData">密文</param>
+        /// <param name="userKey">用户密钥</param>
+        /// <returns>返回一个可能为空的 KeyFile</returns>
+        public static KeyFile Decrypt(KeySpring keySpring, string encryptedData, string userKey)
         {
-            var strBud = new StringBuilder();
-            void StrBudAppend(string _title, string _values)
+            var plain = keySpring.DecryptToString(encryptedData, userKey);
+            return Deserialize(plain);
+        }
+
+        /// <summary>构建key</summary>
+        /// <param name="data">明文数据</param>
+        /// <returns>版本不匹配时返回空 KeyFile</returns>
+        private static KeyFile Deserialize(string data)
+        {
+            var lines = data.Split('\n');
+            if (lines.Length == 0) return new KeyFile();
+
+            var version = lines[0].TrimEnd('\r');
+            if (version != KeyVersion) return new KeyFile();
+
+            var key = new KeyFile();
+            var descSb = new StringBuilder();
+            string section = "";
+            string bindingType = "";
+
+            foreach (var rawLine in lines.Skip(1))
             {
-                strBud.AppendLine($"[{_title}]");
-                foreach(var value in _values.Split('\n'))
-                    strBud.AppendLine('\t' + value);
-
+                var line = rawLine.TrimEnd('\r');
+                if (line.StartsWith('[') && line.EndsWith(']'))
+                {
+                    var name = line[1..^1];
+                    if (name.StartsWith("binding]["))
+                    {
+                        section = "binding";
+                        bindingType = name["binding][".Length..];
+                    }
+                    else
+                    {
+                        section = name;
+                        bindingType = "";
+                    }
+                }
+                else if (line.StartsWith('\t'))
+                {
+                    ApplyValue(key, descSb, section, bindingType, line[1..]);
+                }
             }
-            strBud.AppendLine(KeyVersion);
-            StrBudAppend("title", Title);
-            StrBudAppend("account", Account);
-            StrBudAppend("password", Password);
-            StrBudAppend("description", Description);
-            StrBudAppend("tags", string.Join('\n', tags));
-            return strBud.ToString();
-        }
 
-        #region LoadKey
-        public static KeyFile LoadKey(string _data)
-        {
-            KeyFile key = new KeyFile("", "", "");
-            switch (_data.Split('\n')[0].TrimEnd('\r'))
-            {
-                case "skkey_ver0.1": LoadKeyVer01(key, _data); break;
-            }
+            key.Description = descSb.ToString().TrimEnd('\n');
             return key;
         }
 
-        private static bool LoadKeyVer01(KeyFile _key, string _data)
+        private static void ApplyValue(KeyFile key, StringBuilder descSb, string section, string bindingType,
+            string value)
         {
-            StringBuilder description = new StringBuilder();
-            string sec = "";
-            void Push(string _value)
+            switch (section)
             {
-                if (sec == "") return;
-                switch (sec)
-                {
-                    case "title": _key.Title = _value; break;
-                    case "account": _key.Account = _value; break;
-                    case "password": _key.Password = _value; break;
-                    case "description": description.Append($"{_value}\n"); break;
-                    case "tags": _key.AddTag(_value); break;
-                }
+                case "title": key.Title = value; break;
+                case "account": key.Account = value; break;
+                case "password": key.Password = value; break;
+                case "place": key.Place = value; break;
+                case "description": descSb.Append(value).Append('\n'); break;
+                case "passwordPrev": key.PasswordPrev = value; break;
+                case "binding": key.AddBinding(bindingType, value); break;
             }
-
-            foreach (var stepLine in _data.Split('\n'))
-            {
-                var line = stepLine.TrimEnd('\r');
-                if (line.StartsWith("[") && line.EndsWith("]"))
-                {
-                    sec = line.Trim('[', ']');
-                }
-                else if (line.StartsWith("\t"))
-                {
-                    Push(line.Substring(1));
-                }
-            }
-            _key.Description = description.ToString().TrimEnd('\n');
-            return true;
         }
-        #endregion
-
-        #endregion //api
     }
 }
