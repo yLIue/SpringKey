@@ -265,13 +265,13 @@ namespace SpringKey.Files
 
         private string KeySave(KeyFile _key)
         {
-            string hash = SkHash.GetFileHash(_key.GetStringKey());
+            string hash = SkHash.GetFileHash(_key.Serialize());
             string fileDirPath = Path.Combine(RootPath, hash.Substring(0, 2));
             if (!Directory.Exists(fileDirPath)) Directory.CreateDirectory(fileDirPath);
 
             string filePath = Path.Combine(fileDirPath, hash.Substring(2) + ".skkey");
 
-            File.WriteAllText(filePath, _key.Save(UserKey), new UTF8Encoding(false));
+            File.WriteAllText(filePath, _key.Encrypt(_keySpring, UserKey), new UTF8Encoding(false));
             return hash;
         }
 
@@ -296,8 +296,7 @@ namespace SpringKey.Files
                 return cached;
 
             string filePath = Path.Combine(RootPath, _hash[..2], _hash[2..] + ".skkey");
-            string data = _keySpring.DecryptToString(File.ReadAllText(filePath, Encoding.UTF8), UserKey);
-            var keyFile = KeyFile.LoadKey(data);
+            var keyFile = KeyFile.Decrypt(_keySpring, File.ReadAllText(filePath, Encoding.UTF8), UserKey);
             _keyCache[_hash] = keyFile;
             return keyFile;
         }

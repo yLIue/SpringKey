@@ -45,7 +45,15 @@ class AddFileViewModel : ViewModelBase
         get => _password;
         set => SetProperty(ref _password, value);
     }
-    
+
+    private string _place = "";
+
+    public string Place
+    {
+        get => _place;
+        set => SetProperty(ref _place, value);
+    }
+
     #endregion
 
     public AddFileViewModel() : this(new DialogService(new PromptService()),new PromptService(),new AddKeyParameter())
@@ -65,6 +73,7 @@ class AddFileViewModel : ViewModelBase
             _title = ek.Title;
             _account = ek.Account;
             _password = ek.Password;
+            _place = ek.Place;
         }
     }
     
@@ -76,7 +85,10 @@ class AddFileViewModel : ViewModelBase
     
     private void Save()
     {
-        KeyFile key = new KeyFile(_title,_account,_password);
+        KeyFile key = new KeyFile(_title,_account,_password)
+        {
+            Place = _place
+        };
         if (_addKeyParameter.ExistingKey is { } ek)
             _addKeyParameter.Index.UpdataKey(ek, key);
         else

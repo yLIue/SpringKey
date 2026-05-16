@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SpringKey.Core
 {
-    internal class KeySpring
+    public class KeySpring
     {
         private const byte Version = 0x01;
         private const int SaltSize = 16;

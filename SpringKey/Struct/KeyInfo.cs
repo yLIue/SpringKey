@@ -12,6 +12,8 @@ namespace SpringKey.Struct
         public string Title { get; set; }
         public string Account { get; set; }
         public string Password { get; set; }
+        public string Place { get; set; }
+        public string PasswordPrev { get; set; }
         public string Hash { get; set; }
         public string Group { get; set; }
 
@@ -21,6 +23,8 @@ namespace SpringKey.Struct
             Title = key.Title;
             Account = key.Account;
             Password = key.Password;
+            Place = key.Place;
+            PasswordPrev = key.PasswordPrev;
             Hash = hash;
             Group = group;
         }
@@ -30,6 +34,8 @@ namespace SpringKey.Struct
             Title = _null;
             Account = _null;
             Password = _null;
+            Place = _null;
+            PasswordPrev = _null;
             Hash = _null;
             Group = _null;
         }
