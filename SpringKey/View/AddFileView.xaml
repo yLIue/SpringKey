@@ -4,7 +4,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:vm="clr-namespace:SpringKey.ViewModel"
-        xmlns:local="clr-namespace:SpringKey.View"
         mc:Ignorable="d"
         Title="添加项" Height="620" Width="420"
         MinHeight="620" MinWidth="420"
@@ -49,7 +48,7 @@
                 <TextBox Grid.Column="0" Style="{StaticResource StyleAddKeyInput}"
                          Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" />
                 <ToggleButton x:Name="PasswordHistoryToggle" Grid.Column="1"
-                              Width="28" Margin="2,0,0,0"
+                              Width="22" Margin="2,0,0,0"
                               IsChecked="{Binding IsPasswordHistoryOpen}">
                     <ToggleButton.Style>
                         <Style TargetType="ToggleButton">
@@ -58,7 +57,7 @@
                             <Setter Property="BorderBrush" Value="#3C3C3C" />
                             <Setter Property="BorderThickness" Value="1" />
                             <Setter Property="Padding" Value="4,2" />
-                            <Setter Property="FontSize" Value="10" />
+                            <Setter Property="FontSize" Value="9" />
                             <Setter Property="Cursor" Value="Hand" />
                             <Setter Property="Visibility" Value="Visible" />
                             <Setter Property="Template">
@@ -93,83 +92,98 @@
                        PlacementTarget="{Binding ElementName=PasswordHistoryToggle}"
                        Placement="Bottom"
                        StaysOpen="False">
-                    <!-- Popup width should match the TextBox, we'll set it via the Border -->
                     <Border Background="#2D2D2D" BorderBrush="#555555" BorderThickness="1"
-                            CornerRadius="3" MinWidth="200" MaxHeight="200">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding PasswordPrevList}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid Margin="2">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <Button Grid.Column="0"
-                                                    Content="{Binding}"
-                                                    Foreground="#CCCCCC"
-                                                    HorizontalContentAlignment="Left"
-                                                    Command="{Binding DataContext.SelectPrevPasswordCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                    CommandParameter="{Binding}">
-                                                <Button.Style>
-                                                    <Style TargetType="Button">
-                                                        <Setter Property="Background" Value="Transparent" />
-                                                        <Setter Property="BorderThickness" Value="0" />
-                                                        <Setter Property="Padding" Value="8,4" />
-                                                        <Setter Property="Cursor" Value="Hand" />
-                                                        <Setter Property="Template">
-                                                            <Setter.Value>
-                                                                <ControlTemplate TargetType="Button">
-                                                                    <Border Background="{TemplateBinding Background}"
-                                                                            Padding="{TemplateBinding Padding}">
-                                                                        <ContentPresenter />
-                                                                    </Border>
-                                                                    <ControlTemplate.Triggers>
-                                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                                            <Setter Property="Background" Value="#3C3C3C" />
-                                                                        </Trigger>
-                                                                    </ControlTemplate.Triggers>
-                                                                </ControlTemplate>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                    </Style>
-                                                </Button.Style>
-                                            </Button>
-                                            <Button Grid.Column="1" Content="✕"
-                                                    Foreground="#888888" FontSize="10"
-                                                    Width="24" Height="24"
-                                                    Command="{Binding DataContext.DeletePrevPasswordCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                    CommandParameter="{Binding}">
-                                                <Button.Style>
-                                                    <Style TargetType="Button">
-                                                        <Setter Property="Background" Value="Transparent" />
-                                                        <Setter Property="BorderThickness" Value="0" />
-                                                        <Setter Property="Cursor" Value="Hand" />
-                                                        <Setter Property="Template">
-                                                            <Setter.Value>
-                                                                <ControlTemplate TargetType="Button">
-                                                                    <Border Background="{TemplateBinding Background}"
-                                                                            CornerRadius="2">
-                                                                        <ContentPresenter HorizontalAlignment="Center"
-                                                                                          VerticalAlignment="Center" />
-                                                                    </Border>
-                                                                    <ControlTemplate.Triggers>
-                                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                                            <Setter Property="Background" Value="#4A4A4A" />
-                                                                            <Setter Property="Foreground" Value="#CCCCCC" />
-                                                                        </Trigger>
-                                                                    </ControlTemplate.Triggers>
-                                                                </ControlTemplate>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                    </Style>
-                                                </Button.Style>
-                                            </Button>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
+                            CornerRadius="3" Width="300" MaxHeight="200">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <!-- Header -->
+                            <Border Grid.Row="0" Padding="10,8"
+                                    BorderBrush="#444444" BorderThickness="0,0,0,1">
+                                <TextBlock Text="历史密码" FontSize="11"
+                                           Foreground="#888888" />
+                            </Border>
+
+                            <!-- List -->
+                            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl ItemsSource="{Binding PasswordPrevList}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Button Grid.Column="0"
+                                                        Content="{Binding}"
+                                                        Foreground="#CCCCCC"
+                                                        HorizontalContentAlignment="Left"
+                                                        VerticalContentAlignment="Center"
+                                                        Command="{Binding DataContext.SelectPrevPasswordCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding}">
+                                                    <Button.Style>
+                                                        <Style TargetType="Button">
+                                                            <Setter Property="Background" Value="Transparent" />
+                                                            <Setter Property="BorderThickness" Value="0" />
+                                                            <Setter Property="Padding" Value="8,4" />
+                                                            <Setter Property="Cursor" Value="Hand" />
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate TargetType="Button">
+                                                                        <Border Background="{TemplateBinding Background}"
+                                                                                Padding="{TemplateBinding Padding}">
+                                                                            <ContentPresenter />
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Background" Value="#3C3C3C" />
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </Button.Style>
+                                                </Button>
+                                                <Button Grid.Column="1" Content="✕"
+                                                        Foreground="#888888" FontSize="10"
+                                                        Width="24" Height="24"
+                                                        Command="{Binding DataContext.DeletePrevPasswordCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding}">
+                                                    <Button.Style>
+                                                        <Style TargetType="Button">
+                                                            <Setter Property="Background" Value="Transparent" />
+                                                            <Setter Property="BorderThickness" Value="0" />
+                                                            <Setter Property="Cursor" Value="Hand" />
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate TargetType="Button">
+                                                                        <Border Background="{TemplateBinding Background}"
+                                                                                CornerRadius="2">
+                                                                            <ContentPresenter HorizontalAlignment="Center"
+                                                                                              VerticalAlignment="Center" />
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Background" Value="#4A4A4A" />
+                                                                                <Setter Property="Foreground" Value="#CCCCCC" />
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </Button.Style>
+                                                </Button>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
                     </Border>
                 </Popup>
             </Grid>
@@ -177,7 +191,7 @@
 
         <!-- Row 3: Place -->
         <StackPanel Grid.Row="3" Margin="0,0,0,12">
-            <TextBlock Text="网址" Style="{StaticResource StyleAddKeyText}" />
+            <TextBlock Text="网址/App" Style="{StaticResource StyleAddKeyText}" />
             <TextBox Style="{StaticResource StyleAddKeyInput}"
                      Text="{Binding Place, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
@@ -188,7 +202,39 @@
             <TextBox Style="{StaticResource StyleAddKeyInput}"
                      Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
                      AcceptsReturn="True" Height="60"
-                     TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+                     TextWrapping="Wrap" VerticalScrollBarVisibility="Auto">
+                <TextBox.Resources>
+                    <Style TargetType="ScrollBar">
+                        <Setter Property="Width" Value="6" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ScrollBar">
+                                    <Border Background="Transparent">
+                                        <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                            <Track.Thumb>
+                                                <Thumb Width="6">
+                                                    <Thumb.Style>
+                                                        <Style TargetType="Thumb">
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate TargetType="Thumb">
+                                                                        <Border Background="#555555"
+                                                                                CornerRadius="2" />
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </Thumb.Style>
+                                                </Thumb>
+                                            </Track.Thumb>
+                                        </Track>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TextBox.Resources>
+            </TextBox>
         </StackPanel>
 
         <!-- Row 5: Binding -->
@@ -268,9 +314,28 @@
                                                                      Margin="{TemplateBinding Padding}"
                                                                      VerticalAlignment="Center" />
                                                             <ToggleButton Grid.Column="1"
-                                                                          IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                                                                          Background="Transparent"
-                                                                          BorderThickness="0">
+                                                                          IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                                                                <ToggleButton.Style>
+                                                                    <Style TargetType="ToggleButton">
+                                                                        <Setter Property="Background" Value="Transparent" />
+                                                                        <Setter Property="BorderThickness" Value="0" />
+                                                                        <Setter Property="Template">
+                                                                            <Setter.Value>
+                                                                                <ControlTemplate TargetType="ToggleButton">
+                                                                                    <Border Background="{TemplateBinding Background}">
+                                                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                                                                                                          VerticalAlignment="Center" />
+                                                                                    </Border>
+                                                                                    <ControlTemplate.Triggers>
+                                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                                            <Setter Property="Background" Value="#4A4A4A" />
+                                                                                        </Trigger>
+                                                                                    </ControlTemplate.Triggers>
+                                                                                </ControlTemplate>
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                    </Style>
+                                                                </ToggleButton.Style>
                                                                 <TextBlock Text="▼" FontSize="8"
                                                                            Foreground="#888888"
                                                                            VerticalAlignment="Center"
@@ -284,6 +349,63 @@
                                                                         BorderThickness="1"
                                                                         CornerRadius="3"
                                                                         MinWidth="100">
+                                                                    <Border.Resources>
+                                                                        <Style TargetType="ComboBoxItem">
+                                                                            <Setter Property="FontSize" Value="12" />
+                                                                            <Setter Property="Padding" Value="8,5" />
+                                                                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                                                                            <Setter Property="Foreground" Value="#CCCCCC" />
+                                                                            <Setter Property="Background" Value="Transparent" />
+                                                                            <Setter Property="Template">
+                                                                                <Setter.Value>
+                                                                                    <ControlTemplate TargetType="ComboBoxItem">
+                                                                                        <Border x:Name="itemBd"
+                                                                                                Background="{TemplateBinding Background}"
+                                                                                                Padding="{TemplateBinding Padding}">
+                                                                                            <ContentPresenter />
+                                                                                        </Border>
+                                                                                        <ControlTemplate.Triggers>
+                                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                                <Setter TargetName="itemBd" Property="Background" Value="#3C3C3C" />
+                                                                                            </Trigger>
+                                                                                            <Trigger Property="IsSelected" Value="True">
+                                                                                                <Setter TargetName="itemBd" Property="Background" Value="#4A4A4A" />
+                                                                                            </Trigger>
+                                                                                        </ControlTemplate.Triggers>
+                                                                                    </ControlTemplate>
+                                                                                </Setter.Value>
+                                                                            </Setter>
+                                                                        </Style>
+                                                                        <Style TargetType="ScrollBar">
+                                                                            <Setter Property="Width" Value="6" />
+                                                                            <Setter Property="Template">
+                                                                                <Setter.Value>
+                                                                                    <ControlTemplate TargetType="ScrollBar">
+                                                                                        <Border Background="Transparent">
+                                                                                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                                                                                <Track.Thumb>
+                                                                                                    <Thumb Width="6">
+                                                                                                        <Thumb.Style>
+                                                                                                            <Style TargetType="Thumb">
+                                                                                                                <Setter Property="Template">
+                                                                                                                    <Setter.Value>
+                                                                                                                        <ControlTemplate TargetType="Thumb">
+                                                                                                                            <Border Background="#555555"
+                                                                                                                                    CornerRadius="2" />
+                                                                                                                        </ControlTemplate>
+                                                                                                                    </Setter.Value>
+                                                                                                                </Setter>
+                                                                                                            </Style>
+                                                                                                        </Thumb.Style>
+                                                                                                    </Thumb>
+                                                                                                </Track.Thumb>
+                                                                                            </Track>
+                                                                                        </Border>
+                                                                                    </ControlTemplate>
+                                                                                </Setter.Value>
+                                                                            </Setter>
+                                                                        </Style>
+                                                                    </Border.Resources>
                                                                     <ItemsPresenter />
                                                                 </Border>
                                                             </Popup>
@@ -296,6 +418,11 @@
                                 </ComboBox.Style>
                                 <ComboBoxItem Content="phone" />
                                 <ComboBoxItem Content="email" />
+                                <ComboBoxItem Content="github" />
+                                <ComboBoxItem Content="wechat" />
+                                <ComboBoxItem Content="qq" />
+                                <ComboBoxItem Content="网址" />
+                                <ComboBoxItem Content="备注" />
                             </ComboBox>
                             <TextBox Grid.Column="1" Style="{StaticResource StyleAddKeyInput}"
                                      Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
