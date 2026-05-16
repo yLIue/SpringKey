@@ -117,10 +117,18 @@
                             </StackPanel>
                         </Grid>
 
-                        <Button Content="退出登录" Margin="0,20,0,0" HorizontalAlignment="Left" FontSize="11" Width="70"
-                                Height="28"
-                                Style="{StaticResource StyleIcoButton}"
-                                Command="{Binding SignOutCommand}" />
+                        <Grid Margin="0,20,0,0">
+                            <Button Content="退出登录" HorizontalAlignment="Left" FontSize="11" Width="70"
+                                    Height="28"
+                                    Style="{StaticResource StyleIcoButton}"
+                                    Command="{Binding SignOutCommand}" />
+                            <Button HorizontalAlignment="Right" Style="{StaticResource StyleIcoButton}"
+                                    Height="28"
+                                    Command="{Binding DeleteUserCommand}">
+                                <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                           Foreground="{StaticResource IcoColor}" />
+                            </Button>
+                        </Grid>
 
                     </StackPanel>
                 </Border>

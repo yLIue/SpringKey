@@ -56,6 +56,7 @@ namespace SpringKey.ViewModel
         public ICommand DeleteKeyCommand { get; }
         public ICommand ImportExportCommand { get; }
         public ICommand BackupSettingsCommand { get; }
+        public ICommand DeleteUserCommand { get; }
         public ICommand AddKeyToGroupWithPickerCommand { get; }
         
         private KeyItemViewModel? _selectedKey;
@@ -250,6 +251,7 @@ namespace SpringKey.ViewModel
             DeleteKeyCommand = new RelayCommand<KeyItemViewModel>(DeleteKey);
             ImportExportCommand = new RelayCommand(ShowImportExport);
             BackupSettingsCommand = new RelayCommand(ShowBackupSettings);
+            DeleteUserCommand = new RelayCommand(DeleteUser);
             AddKeyToGroupWithPickerCommand = new RelayCommand<KeyItemViewModel>(AddKeyToGroupWithPicker);
             appPath = Path.Combine(appPath, ".test");
             _dialogService = dialogService;
@@ -564,6 +566,18 @@ namespace SpringKey.ViewModel
             _lastKey = null;
             LoginVisibilityChange();
             _ = PromptChange($"SignOut");
+        }
+
+        private void DeleteUser()
+        {
+            if (userLink == null) return;
+            if (!SpringKey.View.ConfirmDialog.Show(
+                $"确定要删除用户 \"{UserName}\" 吗？\n所有数据将被永久删除，此操作不可恢复。",
+                "删除用户",
+                "删除"))
+                return;
+            userLink.Delete();
+            SignOut();
         }
 
         #region utils
