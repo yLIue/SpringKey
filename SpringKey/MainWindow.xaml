@@ -122,10 +122,12 @@
                                     Height="28"
                                     Style="{StaticResource StyleIcoButton}"
                                     Command="{Binding SignOutCommand}" />
-                            <Button Content="删除用户" HorizontalAlignment="Right" FontSize="11" Width="70"
+                            <Button HorizontalAlignment="Right" Style="{StaticResource StyleIcoButton}"
                                     Height="28"
-                                    Style="{StaticResource StyleIcoButton}"
-                                    Command="{Binding DeleteUserCommand}" />
+                                    Command="{Binding DeleteUserCommand}">
+                                <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                           Foreground="{StaticResource IcoColor}" />
+                            </Button>
                         </Grid>
 
                     </StackPanel>
