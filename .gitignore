@@ -4,6 +4,7 @@
 # Claude
 CLAUDE.md
 .claude/
+.agents
 
 # General
 .idea/

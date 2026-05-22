@@ -218,7 +218,6 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="#3A3A3A" />
                                 <Setter TargetName="Bd" Property="Background" Value="{StaticResource ButtonHover}" />
                                 <Setter Property="Foreground" Value="{StaticResource TextForeground}" />
                             </Trigger>

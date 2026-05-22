@@ -1,14 +1,6 @@
 ﻿using SpringKey.Core;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Policy;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Input;
 using SpringKey.Struct;
 using SpringKey.ViewModel;
 
@@ -97,7 +89,7 @@ namespace SpringKey.Files
                 Groups["全部"].Add(hash);
             if (!Groups.ContainsKey(_class)) CreateGroup(_class);
             Groups[_class].Add(hash);
-            Updata();
+            Update();
         }
 
         public void UpdataKey(KeyInfo _info, KeyFile _newKey)
@@ -130,7 +122,7 @@ namespace SpringKey.Files
             {
                 Directory.Delete(oldDir);
             }
-            Updata();
+            Update();
             _info.Hash = newHash;
             _keyCache.Remove(oldHash);
             _keyCache[newHash] = _newKey;
@@ -146,7 +138,7 @@ namespace SpringKey.Files
             if (File.Exists(filePath)) File.Delete(filePath);
             if (Directory.Exists(dir) && !Directory.EnumerateFileSystemEntries(dir).Any())
                 Directory.Delete(dir);
-            Updata();
+            Update();
         }
         #endregion
 
@@ -169,7 +161,7 @@ namespace SpringKey.Files
             Groups[_info.Group].Remove(_info.Hash);
             Groups[_aimGroup].Add(_info.Hash);
             _info.Group = _aimGroup;
-            Updata();
+            Update();
         }
 
         public void AddGroup(KeyInfo _info, string _aimGroup)
@@ -178,7 +170,7 @@ namespace SpringKey.Files
             if (!Groups[_aimGroup].Contains(_info.Hash))
             {
                 Groups[_aimGroup].Add(_info.Hash);
-                Updata();
+                Update();
             }
         }
 
@@ -203,7 +195,7 @@ namespace SpringKey.Files
                 Groups["未分类"].Add(_info.Hash);
                 _info.Group = "未分类";
             }
-            Updata();
+            Update();
         }
 
         public bool RenameGroup(string _oldName, string _newName)
@@ -216,7 +208,7 @@ namespace SpringKey.Files
             Groups.Remove(_oldName);
             int idx = groupIndex.IndexOf(_oldName);
             groupIndex[idx] = _newName;
-            Updata();
+            Update();
             return true;
         }
 
@@ -241,7 +233,7 @@ namespace SpringKey.Files
                 if (!inOtherGroup)
                     Groups["未分类"].Add(hash);
             }
-            Updata();
+            Update();
         }
         #endregion
         #endregion
@@ -258,7 +250,7 @@ namespace SpringKey.Files
         {
             if (Groups.ContainsKey(_groupName)) return;
             CreateGroup(_groupName);
-            Updata();
+            Update();
         }
 
         public void ClearCache() => _keyCache.Clear();
@@ -275,7 +267,7 @@ namespace SpringKey.Files
             return hash;
         }
 
-        private void Updata()
+        private void Update()
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(Version);

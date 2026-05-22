@@ -24,7 +24,6 @@ class AddFileViewModel : ViewModelBase
     public ICommand SaveCommand { get; }
     public ICommand AddBindingCommand { get; }
     public ICommand RemoveBindingCommand { get; }
-    public ICommand TogglePasswordHistoryCommand { get; }
     public ICommand SelectPrevPasswordCommand { get; }
     public ICommand DeletePrevPasswordCommand { get; }
 
@@ -92,7 +91,6 @@ class AddFileViewModel : ViewModelBase
         SaveCommand = new RelayCommand(Save, IsSave);
         AddBindingCommand = new RelayCommand(AddBinding);
         RemoveBindingCommand = new RelayCommand<BindingItem>(RemoveBinding);
-        TogglePasswordHistoryCommand = new RelayCommand(TogglePasswordHistory);
         SelectPrevPasswordCommand = new RelayCommand<string>(SelectPrevPassword);
         DeletePrevPasswordCommand = new RelayCommand<string>(DeletePrevPassword);
 
