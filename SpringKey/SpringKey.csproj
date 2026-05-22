@@ -6,6 +6,16 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>..\.ico\SpringKey_ico.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Update="Services\DialogService.cs">
+      <DependentUpon>IDialogService.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Services\PromptService.cs">
+      <DependentUpon>IPromptService.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
 
 </Project>

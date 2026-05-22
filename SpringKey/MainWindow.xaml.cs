@@ -1,15 +1,6 @@
-﻿using System.IO;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-
-using SpringKey.Models;
+﻿using System.Windows;
+using SpringKey.ViewModel;
+using SpringKey.Services;
 
 namespace SpringKey
 {
@@ -21,8 +12,38 @@ namespace SpringKey
         public MainWindow()
         {
             InitializeComponent();
-            Test test = new Test();
-            test.KeyStructTest();
+            var promptService = new PromptService();
+            var dialogService = new DialogService(promptService);
+            var vm = new MainViewModel(dialogService, promptService);
+            DataContext = vm;
         }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            if (DataContext is MainViewModel vm)
+                vm.Cleanup();
+            base.OnClosed(e);
+        }
+
+
+        private void GroupMenuButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is System.Windows.Controls.Button btn && btn.ContextMenu != null)
+            {
+                btn.ContextMenu.PlacementTarget = btn;
+                btn.ContextMenu.IsOpen = true;
+            }
+        }
+
+
+        private void KeyMenuButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is System.Windows.Controls.Button btn && btn.ContextMenu != null)
+            {
+                btn.ContextMenu.PlacementTarget = btn;
+                btn.ContextMenu.IsOpen = true;
+            }
+        }
+
     }
 }

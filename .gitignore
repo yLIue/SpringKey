@@ -1,6 +1,11 @@
 # My
 .y_bin/
 
+# Claude
+CLAUDE.md
+.claude/
+.agents
+
 # General
 .idea/
 .ignore/
